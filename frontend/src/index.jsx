@@ -57,7 +57,8 @@ function App() {
                 (isLogged() ? user : true) &&
                 <Router>
                     <Route path="/"><Home {...props} /></Route>
-                </Router>}
+                </Router>
+            }
         </>
     );
 }

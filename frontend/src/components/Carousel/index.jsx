@@ -15,15 +15,15 @@ export default function Carousel({ children }) {
         return () => {
             clearInterval(interval);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        if (container.current) {
-            const element = container.current.querySelector("ul > li:nth-child(2)");
-            const left = element.offsetLeft;
-            container.current.scrollTo({ left: left - container.current.offsetWidth / 2 + element.offsetWidth / 2 });
-        }
-    }, [container]);
+        const element = container.current.querySelector("ul > li:nth-child(" + (current + 2) + ")");
+        const left = element.offsetLeft;
+
+        container.current.scrollTo({ left: left - container.current.offsetWidth / 2 + element.offsetWidth / 2, behavior: "smooth" });
+    }, [current]);
 
     return (<div ref={container} className="w-full overflow-hidden">
         <ul className="flex w-max">
