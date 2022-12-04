@@ -18,13 +18,13 @@ export default function Home(props) {
     return (<>
         <Header {...props} />
         <div className="flex flex-col items-center w-full bg-[url('../images/background.webp')] pt-[4.5rem]">
-            <div className="w-3/5 max-w-5xl bg-[#58536a] text-center text-white pt-16 pb-8">
+            <div className="w-full md:w-3/5 max-w-5xl bg-[#58536a] text-center text-white pt-16 pb-8 px-4">
                 <img className="mx-auto mb-8 rounded-3xl" src={logo} alt="Nahel Transport" />
                 <h1 className="text-6xl italic mb-4 font-[serif]">Nahel Transport</h1>
                 <p className="text-lg">Un service d'exception</p>
             </div>
             <Carousel>
-                {images.map(image => <img key={image.alt} className="h-[565px]" src={image.src} alt={image.alt} />)}
+                {images.map(image => <img key={image.alt} className="w-screen md:w-auto md:h-[565px]" src={image.src} alt={image.alt} />)}
             </Carousel>
         </div>
         <Footer {...props} />

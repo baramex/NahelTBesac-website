@@ -90,7 +90,7 @@ function MobileNavigation() {
 
 export default function Header({ user, setUser, addAlert }) {
     return (
-        <header className="py-3 px-5 fixed w-full bg-[#393d32]">
+        <header className="py-3 px-5 top-0 fixed w-full bg-[#393d32]">
             <div className="relative flex items-center min-h-[3rem]">
                 <Link className="absolute left-0" to="/">
                     <img

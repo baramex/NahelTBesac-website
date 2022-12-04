@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom/client';
 import { Route, BrowserRouter as Router } from 'react-router-dom';
 import { AlertContainer } from './components/Alerts';
 import Home from './components/Home';
+import Rules from './components/Rules';
+import Team from './components/Team';
+import ToDoList from './components/ToDoList';
 import { fetchData } from './lib/service';
 import { isLogged } from './lib/service/authentification';
 import { fetchUser } from './lib/service/profile';
@@ -56,7 +59,10 @@ function App() {
             {
                 (isLogged() ? user : true) &&
                 <Router>
-                    <Route path="/"><Home {...props} /></Route>
+                    <Route exact path="/"><Home {...props} /></Route>
+                    <Route exact path="/to-do-list"><ToDoList {...props} /></Route>
+                    <Route exact path="/rules"><Rules {...props} /></Route>
+                    <Route exact path="/team"><Team {...props} /></Route>
                 </Router>
             }
         </>
