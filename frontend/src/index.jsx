@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { Route, BrowserRouter as Router } from 'react-router-dom';
 import { AlertContainer } from './components/Alerts';
 import Home from './components/Home';
+import Login from './components/Login';
 import Rules from './components/Rules';
 import Team from './components/Team';
 import ToDoList from './components/ToDoList';
@@ -63,6 +64,8 @@ function App() {
                     <Route exact path="/to-do-list"><ToDoList {...props} /></Route>
                     <Route exact path="/rules"><Rules {...props} /></Route>
                     <Route exact path="/team"><Team {...props} /></Route>
+
+                    <Route exact path="/login"><Login {...props} /></Route>
                 </Router>
             }
         </>
