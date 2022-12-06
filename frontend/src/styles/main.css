@@ -5,5 +5,10 @@ html {
 }
 
 body {
-    background-color: #393d32;
+    background-color: #58536a;
+}
+
+#root {
+    min-height: 100vh;
+    position: relative;
 }
