@@ -5,7 +5,7 @@ import Header from "../Layout/Header";
 export default function Rules(props) {
     return (<>
         <Header {...props} />
-        <div className="pt-[4.5rem] bg-[#58536a] text-white pb-12 px-6">
+        <div className="pt-[4.5rem] bg-theme-700 text-white pb-12 px-6">
             <Check className="text-gray-100 mx-auto w-14 mt-12 mb-8" />
             <h1 className="text-center text-4xl font-medium mb-10">Règlement Nahel Transport</h1>
             <div className="px-6 flex justify-center">

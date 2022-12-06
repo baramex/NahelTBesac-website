@@ -21,7 +21,7 @@ function Field({ Element, defaultValue = "", className, showChanged, forwardRef,
     }, [defaultValue]);
 
     return (
-        <Element empty={!value ? "true" : undefined} ref={forwardRef} value={value} changed={defaultValue || showChanged ? value === defaultValue ? undefined : "true" : undefined} onChange={e => setValue(e.target.value)} {...props} className={clsx("block w-full bg-white [[changed_&]]:border-blue-400 focus:[[changed_&]]:border-blue-500 [&:not([empty])]:invalid:border-red-500 [&:not([empty])]:invalid:focus:border-red-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 appearance-none shadow-sm rounded-md border border-gray-300 px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-0 sm:text-sm", className)} />
+        <Element empty={!value ? "true" : undefined} ref={forwardRef} value={value} changed={defaultValue || showChanged ? value === defaultValue ? undefined : "true" : undefined} onChange={e => setValue(e.target.value)} {...props} className={clsx("block w-full bg-white [[changed_&]]:border-blue-400 focus:[[changed_&]]:border-blue-500 [&:not([empty])]:invalid:border-red-500 [&:not([empty])]:invalid:focus:border-red-600 disabled:cursor-not-allowed disabled:bg-theme-50 disabled:text-theme-500 appearance-none shadow-sm rounded-md border border-transparent px-3 py-2.5 text-theme-800 placeholder-gray-400 transition-colors focus:border-theme-300 focus:outline-none focus:ring-0 sm:text-sm", className)} />
     );
 }
 
@@ -43,8 +43,8 @@ export function TextField({
                     <Field Element="input" id={id} type={showPassword ? "text" : "password"} {...props} className="peer pr-10" />
                     <input id={"show-" + id} name='show' checked={showPassword} onChange={e => setShowPassword(e.target.checked)} className='hidden' type="checkbox" />
                     <label htmlFor={"show-" + id} className={clsx('transition-transform absolute flex items-center mr-3 right-0 top-0 h-full peer-focus:translate-y-0 hover:translate-y-0 cursor-pointer', showPassword ? "translate-y-0" : "-translate-y-full")}>
-                        <EyeIcon className={clsx('stroke-gray-500 stroke-1 hover:stroke-[#58536a]', showPassword ? "hidden" : "")} width="22" />
-                        <EyeSlashIcon className={clsx('stroke-1 stroke-gray-500 hover:stroke-[#58536a]', !showPassword ? "hidden" : "")} width="22" />
+                        <EyeIcon className={clsx('stroke-theme-500 stroke-1 hover:stroke-theme-700', showPassword ? "hidden" : "")} width="22" />
+                        <EyeSlashIcon className={clsx('stroke-1 stroke-theme-500 hover:stroke-theme-700', !showPassword ? "hidden" : "")} width="22" />
                     </label>
                 </div>
                 :

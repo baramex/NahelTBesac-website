@@ -18,7 +18,7 @@ export default function Home(props) {
     return (<>
         <Header {...props} />
         <div className="flex flex-col items-center w-full bg-[url('../images/background.gif')] bg-cover bg-fixed bg-no-repeat pt-[4.5rem]">
-            <div className="w-full md:w-3/5 max-w-5xl bg-[#58536a] text-center text-white pt-16 pb-8 px-4">
+            <div className="w-full md:w-3/5 max-w-5xl bg-theme-700 text-center text-white pt-16 pb-8 px-4">
                 <img className="mx-auto mb-8 rounded-3xl" src={logo} alt="Nahel Transport" />
                 <h1 className="text-6xl italic mb-4 font-[serif]">Nahel Transport</h1>
                 <p className="text-lg">Un service d'exception</p>

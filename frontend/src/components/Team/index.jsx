@@ -8,7 +8,7 @@ import M_G from "../../images/avatars/M_G.webp";
 export default function Team(props) {
     return (<>
         <Header {...props} />
-        <div className="pt-[4.5rem] bg-[#58536a] text-white pb-12 px-6">
+        <div className="pt-[4.5rem] bg-theme-700 text-white pb-12 px-6">
             <h1 className="text-center text-4xl font-medium my-20">Notre équipe</h1>
             <div className="px-6 mx-auto flex-wrap flex gap-12 justify-around max-w-5xl">
                 <Member avatar={Amine} name="Amine" role="Livreur" />
