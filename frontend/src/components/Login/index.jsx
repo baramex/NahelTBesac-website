@@ -26,7 +26,7 @@ export default function Login(props) {
                         autoComplete="password"
                         placeholder="•••••••••"
                         required />
-                    <Button className="mx-auto w-1/3 mt-3">
+                    <Button className="mx-auto w-full md:w-1/3 mt-3">
                         Se connecter
                     </Button>
                 </form>
