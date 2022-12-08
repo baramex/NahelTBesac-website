@@ -54,15 +54,16 @@ router.post("/login", rateLimit({
 // refresh token
 router.post("/refresh", async (req, res) => {
     try {
-        if (!req.body) throw new Error("Requête invalide.");
-
-        const { refreshToken } = req.body;
+        const refreshToken = req.cookies.refreshToken;
         if (typeof refreshToken != "string") throw new Error("Requête invalide.");
 
         let session = await Session.getSessionByRefreshToken(refreshToken);
 
         const profile = session?.profile;
-        if (!session || typeof profile != "object") throw new Error("Jeton de rafraîchissement invalide.");
+        if (!session || typeof profile != "object") {
+            res.clearCookie("refreshToken");
+            throw new Error("Jeton de rafraîchissement invalide.");
+        }
 
         const ip = getClientIp(req);
         if (session.active) await Session.disable(session);

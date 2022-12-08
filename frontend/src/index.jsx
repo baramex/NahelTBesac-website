@@ -8,7 +8,7 @@ import Rules from './components/Rules';
 import Team from './components/Team';
 import ToDoList from './components/ToDoList';
 import { fetchData } from './lib/service';
-import { isLogged } from './lib/service/authentification';
+import { canRefresh, isLogged, refreshToken } from './lib/service/authentification';
 import { fetchUser } from './lib/service/profile';
 import "./styles/main.css";
 import "./styles/tailwind.css";
@@ -46,8 +46,17 @@ function App() {
 
                 sessionStorage.setItem('user', JSON.stringify(user));
             } else {
-                if (user) setUser(null);
-                if (suser) sessionStorage.removeItem('user');
+                try {
+                    if (!canRefresh()) throw new Error();
+                    const tuser = await refreshToken();
+                    if (!tuser) throw new Error();
+                    setUser(tuser);
+                    sessionStorage.setItem("lastupdate", Date.now());
+                    return;
+                } catch (error) {
+                    if (user) setUser(null);
+                    if (suser) sessionStorage.removeItem('user');
+                }
             }
         })();
     }, [user]);

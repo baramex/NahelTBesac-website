@@ -8,7 +8,7 @@ export function api(endpoint, method, data = undefined, customHeader = undefined
 
         axios({
             method,
-            url: "http://localhost:5000" + endpoint,
+            url: "/api" + endpoint,
             data,
             headers: customHeader,
             responseType,
