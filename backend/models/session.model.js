@@ -1,7 +1,6 @@
 const { ObjectId } = require("mongodb");
 const { Schema, model } = require("mongoose");
 const token = require("random-web-token");
-const { Profile } = require("./profile.model");
 
 const session = new Schema({
     refreshToken: { type: String, unique: true },
@@ -28,8 +27,7 @@ session.post("validate", async function (doc, next) {
 
             doc.markModified("token");
         }
-    }
-
+    } s
     next();
 });
 
@@ -38,7 +36,7 @@ const SessionModel = model('Session', session);
 class Session {
     static expiresIn = 60 * 60 * 24 * 2;
     static expiresInRefresh = 60 * 60 * 24 * 7;
-    static populate = "profile";
+    static populate = "profile profile.role";
 
     /**
      * 
@@ -47,7 +45,7 @@ class Session {
      * @returns 
      */
     static create(profileId, ip) {
-        return new SessionModel({ profile: profileId, ips: [ip] });
+        return new SessionModel({ profile: profileId, ips: [ip] }).populate(this.populate).save();
     }
 
     static disable(session) {
@@ -71,6 +69,15 @@ class Session {
      */
     static getSessionByToken(token) {
         return SessionModel.findOne({ token, active: true }).populate(this.populate);
+    }
+
+    /**
+     * 
+     * @param {String} refreshToken 
+     * @returns 
+     */
+    static getSessionByRefreshToken(refreshToken) {
+        return SessionModel.findOne({ refreshToken, active: true }).populate(this.populate);
     }
 
     /**
@@ -103,6 +110,7 @@ class SessionMiddleware {
         if (!token) throw new Error();
 
         const session = await Session.getSessionByToken(token);
+        if (Session.checkExpired(session.date)) throw new Error();
         if (!session || !session.profile || typeof session.profile !== "object") throw new Error();
 
         return { profile: session.profile, session };

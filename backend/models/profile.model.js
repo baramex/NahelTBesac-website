@@ -37,7 +37,7 @@ class Profile {
     static populate = "role";
 
     static create(fistname, lastname, password, email, role) {
-        return new ProfileModel({ name: { fistname, lastname }, password, email, role }).populate(this.populate);
+        return new ProfileModel({ name: { fistname, lastname }, password, email, role }).populate(this.populate).save();
     }
 
     static hasPermission(profile, ...permissions) {
@@ -47,6 +47,10 @@ class Profile {
 
     static getProfileById(id) {
         return ProfileModel.findById(id).populate(this.populate);
+    }
+
+    static getAll() {
+        return ProfileModel.find().populate(this.populate);
     }
 
     static async check(email, password) {

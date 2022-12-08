@@ -17,7 +17,7 @@ const RoleModel = model("Role", roleSchema, "roles");
 
 class Role {
     static create(name, permissions) {
-        return new RoleModel({ name, permissions });
+        return new RoleModel({ name, permissions }).save();
     }
 
     static getAll() {

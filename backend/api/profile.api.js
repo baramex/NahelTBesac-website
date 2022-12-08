@@ -8,11 +8,13 @@ const router = require('express').Router();
 // create profile
 router.post("/", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.requiresPermissions(PERMISSIONS.CREATE_PROFILE), async (req, res) => {
     try {
+        if (!req.body) throw new Error("Requête invalide.");
+
         const { name, password, email, role } = req.body;
         if (typeof name != "object" || typeof name.firstname != "string" || typeof name.lastname != "string" || typeof password != "string" || typeof email != "string" || typeof role != "string") throw new Error("Requête invalide.");
 
         const profile = await Profile.create(name.firstname, name.lastname, password, email, role);
-        return profile;
+        res.status(201).json(Profile.getProfileFields(profile, false));
     } catch (error) {
         console.error(error);
         res.status(400).send(error.message || "Une erreur est survenue.");
@@ -22,7 +24,7 @@ router.post("/", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.r
 // get profile
 router.get("/:id", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.parseParamsProfile(), async (req, res) => {
     try {
-        res.status(200).send(Profile.getProfileFields(req.paramsProfile, Profile.hasPermission(req.profile, PERMISSIONS.VIEW_PROFILE)));
+        res.status(200).send(Profile.getProfileFields(req.paramsProfile, Profile.hasPermission(req.profile, !PERMISSIONS.VIEW_PROFILE)));
     } catch (error) {
         console.error(error);
         res.status(400).send(error.message || "Une erreur est survenue.");
@@ -37,6 +39,7 @@ router.patch("/:id", rateLimit({
     legacyHeaders: false
 }), SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.parseParamsProfile(PERMISSIONS.EDIT_PROFILE), async (req, res) => {
     try {
+        if (!req.body) throw new Error("Requête invalide.");
         const profile = req.paramsProfile;
 
         if (typeof req.body.email == "string") {
