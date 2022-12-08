@@ -1,6 +1,7 @@
 const { Profile } = require("../models/profile.model");
 const { SessionMiddleware, Session } = require("../models/session.model");
 const { getClientIp } = require("request-ip");
+const { rateLimit } = require("express-rate-limit");
 
 const router = require("express").Router();
 

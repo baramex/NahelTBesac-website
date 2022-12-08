@@ -2,6 +2,7 @@ const { ObjectId } = require('mongodb');
 const { Profile, ProfileMiddleware } = require('../models/profile.model');
 const { PERMISSIONS } = require('../models/role.model');
 const { SessionMiddleware } = require('../models/session.model');
+const { rateLimit } = require("express-rate-limit");
 
 const router = require('express').Router();
 
