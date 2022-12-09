@@ -15,7 +15,7 @@ router.post("/", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.r
         if (typeof name != "object" || typeof name.firstname != "string" || typeof name.lastname != "string" || typeof password != "string" || typeof email != "string" || typeof role != "string") throw new Error("Requête invalide.");
 
         const profile = await Profile.create(name.firstname, name.lastname, password, email, role);
-        res.status(201).json(Profile.getProfileFields(profile, false));
+        res.status(201).json(Profile.getProfileFields(profile, true));
     } catch (error) {
         console.error(error);
         res.status(400).send(error.message || "Une erreur est survenue.");
@@ -25,7 +25,7 @@ router.post("/", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.r
 // get profile
 router.get("/:id", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.parseParamsProfile(), async (req, res) => {
     try {
-        res.status(200).send(Profile.getProfileFields(req.paramsProfile, Profile.hasPermission(req.profile, !PERMISSIONS.VIEW_PROFILE)));
+        res.status(200).send(Profile.getProfileFields(req.paramsProfile, Profile.hasPermission(req.profile, PERMISSIONS.VIEW_PROFILE) || req.paramsProfile._id.equals(req.profile._id)));
     } catch (error) {
         console.error(error);
         res.status(400).send(error.message || "Une erreur est survenue.");
@@ -58,9 +58,9 @@ router.patch("/:id", rateLimit({
         if (ObjectId.isValid(req.body.role)) {
             profile.role = req.body.role;
         }
-        await profile.save({ validateBeforeSave: true }).populate("role");
+        await (await profile.save({ validateBeforeSave: true })).populate("role");
 
-        res.status(200).send(Profile.getProfileFields(profile, false));
+        res.status(200).send(Profile.getProfileFields(profile, true));
     } catch (error) {
         console.error(error);
         res.status(400).send(error.message || "Une erreur est survenue.");

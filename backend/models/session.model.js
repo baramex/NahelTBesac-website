@@ -3,8 +3,8 @@ const { Schema, model } = require("mongoose");
 const token = require("random-web-token");
 
 const session = new Schema({
-    refreshToken: { type: String, unique: true },
-    token: { type: String, unique: true },
+    refreshToken: String,
+    token: String,
     profile: { type: ObjectId, ref: "Profile", required: true, unique: true },
     ips: { type: [String], required: true },
     active: { type: Boolean, default: true, required: true },
@@ -27,7 +27,7 @@ session.post("validate", async function (doc, next) {
 
             doc.markModified("token");
         }
-    } s
+    }
     next();
 });
 
@@ -36,7 +36,12 @@ const SessionModel = model('Session', session);
 class Session {
     static expiresIn = 60 * 60 * 24 * 2;
     static expiresInRefresh = 60 * 60 * 24 * 7;
-    static populate = "profile profile.role";
+    static populate = {
+        path: "profile",
+        populate: {
+            path: "role"
+        }
+    };
 
     /**
      * 
@@ -44,8 +49,8 @@ class Session {
      * @param {String} ip 
      * @returns 
      */
-    static create(profileId, ip) {
-        return new SessionModel({ profile: profileId, ips: [ip] }).populate(this.populate).save();
+    static async create(profileId, ip) {
+        return (await new SessionModel({ profile: profileId, ips: [ip] }).save()).populate(Session.populate);
     }
 
     static disable(session) {
@@ -68,7 +73,7 @@ class Session {
      * @returns 
      */
     static getSessionByToken(token) {
-        return SessionModel.findOne({ token, active: true }).populate(this.populate);
+        return SessionModel.findOne({ token, active: true }).populate(Session.populate);
     }
 
     /**
@@ -77,7 +82,7 @@ class Session {
      * @returns 
      */
     static getSessionByRefreshToken(refreshToken) {
-        return SessionModel.findOne({ refreshToken, active: true }).populate(this.populate);
+        return SessionModel.findOne({ refreshToken, active: true }).populate(Session.populate);
     }
 
     /**
@@ -85,7 +90,7 @@ class Session {
      * @param {Date} date 
      */
     static checkExpired(date) {
-        return new Date().getTime() - date.getTime() > this.expiresIn * 1000;
+        return new Date().getTime() - date.getTime() > Session.expiresIn * 1000;
     }
 
     /**
@@ -94,11 +99,11 @@ class Session {
      * @returns 
      */
     static getSessionByProfileId(profileId) {
-        return SessionModel.findOne({ profile: profileId }).populate(this.populate);
+        return SessionModel.findOne({ profile: profileId }).populate(Session.populate);
     }
 
     static update() {
-        SessionModel.updateMany({ active: true, date: { $gt: new Date().getTime() - this.expiresIn * 1000 } }, { $set: { active: false }, $unset: { token: true } }, { runValidators: true });
+        SessionModel.updateMany({ active: true, date: { $gt: new Date().getTime() - Session.expiresIn * 1000 } }, { $set: { active: false }, $unset: { token: true } }, { runValidators: true });
     }
 }
 
@@ -118,7 +123,7 @@ class SessionMiddleware {
 
     static async requiresValidAuthExpress(req, res, next) {
         try {
-            const result = await Middleware.checkValidAuth(req.cookies);
+            const result = await SessionMiddleware.checkValidAuth(req.cookies);
             req.profile = result.profile;
             req.session = result.session;
 
@@ -131,7 +136,7 @@ class SessionMiddleware {
 
     static async isValidAuthExpress(req, res, next) {
         try {
-            await Middleware.checkValidAuth(req.cookies);
+            await SessionMiddleware.checkValidAuth(req.cookies);
             req.isAuthed = true;
         } catch (error) {
             req.isAuthed = false;

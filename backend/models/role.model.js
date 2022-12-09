@@ -9,8 +9,7 @@ const PERMISSIONS = {
 
 const roleSchema = new Schema({
     name: { type: String, required: true, trim: true, unique: true, validate: { validator: /^[a-zà-ÿ]{1,128}$/i, message: "Le nom du rôle est invalide." } },
-    permissions: { type: [{ type: Number, enum: Object.values(PERMISSIONS) }], required: true },
-    date: { type: Date, default: Date.now, required: true }
+    permissions: { type: [{ type: Number, enum: Object.values(PERMISSIONS) }], required: true }
 });
 
 const RoleModel = model("Role", roleSchema, "roles");

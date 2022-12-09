@@ -36,52 +36,56 @@ const ProfileModel = model("Profile", profileSchema, "profiles");
 class Profile {
     static populate = "role";
 
-    static create(fistname, lastname, password, email, role) {
-        return new ProfileModel({ name: { fistname, lastname }, password, email, role }).populate(this.populate).save();
+    static async create(firstname, lastname, password, email, role) {
+        return (await new ProfileModel({ name: { firstname, lastname }, password, email, role }).save()).populate(Profile.populate);
     }
 
     static hasPermission(profile, ...permissions) {
         if (!permissions || permissions.length == 0) return true;
-        return permissions.every(p => profile.role.permissions.includes(p)) || profile.role.permissions.includes(PERMISSIONS.ALL);
+        if (!profile) return false;
+        return permissions.every(p => profile.role.permissions?.includes(p)) || profile.role.permissions?.includes(PERMISSIONS.ALL);
     }
 
     static getProfileById(id) {
-        return ProfileModel.findById(id).populate(this.populate);
+        return ProfileModel.findById(id).populate(Profile.populate);
     }
 
     static getAll() {
-        return ProfileModel.find().populate(this.populate);
+        return ProfileModel.find().populate(Profile.populate);
     }
 
     static async check(email, password) {
         if (!email || !password) return false;
-        const profile = await ProfileModel.findOne({ email }).populate(this.populate);
+        const profile = await ProfileModel.findOne({ email }).populate(Profile.populate);
         if (!profile) return false;
         if (!profile.password) return false;
         if (await compare(password, profile.password)) return profile;
         return false;
     }
 
-    static getProfileFields(profile, partial = true) {
-        return partial ? { name: profile.name, role: profile.role?.name } : {
+    static getProfileFields(profile, complete = false) {
+        return complete ? {
             _id: profile._id, name: profile.name, email: profile.email, role: profile.role, date: profile.date
-        };
+        } : { name: profile.name, role: profile.role?.name };
     }
 }
 
 class ProfileMiddleware {
     static parseParamsProfile(...permissions) {
-        return (req, res, next) => {
+        return async (req, res, next) => {
             try {
                 const id = req.params.id;
-                if (!id || id != "@me" || !ObjectId.isValid(id)) throw new Error("Requête invalide.");
+                if (!id || (id == "@me" ? false : !ObjectId.isValid(id))) throw new Error("Requête invalide.");
 
-                if (!req.profile || (id != "@me" && !Profile.hasPermission(req.profile, ...permissions))) throw new CustomError("Vous n'avez pas les permissions nécessaires.", 403);
+                if (id == "@me" ? !req.profile : !Profile.hasPermission(req.profile, ...permissions)) throw new CustomError("Non autorisé.", 403);
 
-                const profile = Profile.getProfileById(id);
-                if (!profile) throw new Error("Utilisateur introuvable.");
+                if (id == "@me" || id == req.profile?._id) req.paramsProfile = req.profile;
+                else {
+                    const profile = await Profile.getProfileById(id);
+                    if (!profile) throw new Error("Utilisateur introuvable.");
+                    req.paramsProfile = profile;
+                }
 
-                req.paramsProfile = profile;
                 next();
             } catch (error) {
                 console.error(error);

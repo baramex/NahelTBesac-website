@@ -6,7 +6,7 @@ export function login(email, password) {
 }
 
 export async function register(data) {
-    return await api("/register", "post", data);
+    return await api("/profile", "post", data);
 }
 
 export function logout() {

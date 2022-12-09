@@ -27,14 +27,19 @@ const reportSchema = new Schema({
 const ReportModel = model("Report", reportSchema, "reports");
 
 class Report {
-    static populate = "profile profile.role";
+    static populate = {
+        path: "profile",
+        populate: {
+            path: "role"
+        }
+    };
 
-    static create(profileId, round, opinion, mileage, petrol, packetNotDelivered) {
-        return new ReportModel({ profile: profileId, round, opinion, mileage, petrol, packetNotDelivered }).populate(this.populate).save();
+    static async create(profileId, round, opinion, mileage, petrol, packetNotDelivered) {
+        return (await new ReportModel({ profile: profileId, round, opinion, mileage, petrol, packetNotDelivered }).save()).populate(Report.populate);
     }
 
     static getByProfileId(profileId) {
-        return ReportModel.find({ profile: profileId }).populate(this.populate);
+        return ReportModel.find({ profile: profileId }).populate(Report.populate);
     }
 
     static getFromDayBefore() {
@@ -42,7 +47,7 @@ class Report {
         dayBefore.setDate(dayBefore.getDate() - 1);
         dayBefore.setHours(0, 0, 0, 0);
 
-        return ReportModel.find({ date: { $gte: dayBefore } }).populate(this.populate);
+        return ReportModel.find({ date: { $gte: dayBefore } }).populate(Report.populate);
     }
 }
 

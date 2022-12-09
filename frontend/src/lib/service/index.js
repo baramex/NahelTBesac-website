@@ -25,10 +25,6 @@ export function api(endpoint, method, data = undefined, customHeader = undefined
                     api(endpoint, method, copyData, copyHeader).then(res).catch(rej);
                 }, time * 1000);
             }
-            else if (status === 401) {
-                if (response.data === "refresh") document.location.reload();
-                rej(new Error(response.data));
-            }
             else {
                 const message = response.data;
                 rej(new Error(message));

@@ -105,7 +105,7 @@ export default function Header({ user, setUser, addAlert }) {
                         <NavLink href="/rules">Règlement</NavLink>
                         <NavLink href="/team">L'équipe</NavLink>
                     </div>
-                    <div className="absolute right-0 flex items-center gap-x-5 md:gap-x-8">
+                    <div className="absolute right-0 top-0 h-full flex items-center gap-x-5 md:gap-x-8">
                         {
                             user ?
                                 <UserMenu user={user} setUser={setUser} addAlert={addAlert} />

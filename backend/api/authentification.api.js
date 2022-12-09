@@ -45,7 +45,7 @@ router.post("/login", rateLimit({
 
         const expires = new Date(Session.expiresIn * 1000 + new Date().getTime());
         const expiresRefresh = new Date(Session.expiresInRefresh * 1000 + new Date().getTime());
-        res.cookie("token", session.token, { expires }).cookie("refreshToken", session.refreshToken, { expires: expiresRefresh }).json(Profile.getProfileFields(profile, false));
+        res.cookie("token", session.token, { expires }).cookie("refreshToken", session.refreshToken, { expires: expiresRefresh }).json(Profile.getProfileFields(profile, true));
     } catch (error) {
         console.error(error);
         res.status(400).send(error.message || "Une erreur est survenue.");
@@ -75,7 +75,7 @@ router.post("/refresh", async (req, res) => {
 
         const expires = new Date(Session.expiresIn * 1000 + new Date().getTime());
         const expiresRefresh = new Date(Session.expiresInRefresh * 1000 + new Date().getTime());
-        res.cookie("token", session.token, { expires }).cookie("refreshToken", session.refreshToken, { expires: expiresRefresh }).json(Profile.getProfileFields(profile, false));
+        res.cookie("token", session.token, { expires }).cookie("refreshToken", session.refreshToken, { expires: expiresRefresh }).json(Profile.getProfileFields(profile, true));
     } catch (error) {
         console.error(error);
         res.status(400).send(error.message || "Une erreur est survenue.");
