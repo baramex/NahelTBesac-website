@@ -31,6 +31,10 @@ export default function UserMenu({ user, setUser, addAlert }) {
             leaveTo="transform opacity-0 scale-95"
         >
             <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="px-4 py-3">
+                    <p className="truncate font-medium text-gray-900 text-sm">{user.name.firstname} {user.name.lastname}</p>
+                    <p className="text-sm text-gray-700">{user.role.name}</p>
+                </div>
                 {(userNavigation).map((items, i) => (
                     <div className='py-1' key={i}>
                         {items.map(item => (

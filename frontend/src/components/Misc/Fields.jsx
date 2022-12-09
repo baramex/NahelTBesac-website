@@ -2,10 +2,10 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
-function Label({ optinal, children, id }) {
+export function Label({ optinal, children, className, id }) {
     return (<label
         htmlFor={id}
-        className="mb-2 block text-sm font-medium text-white"
+        className={clsx("mb-2 block text-sm font-medium text-white", className)}
     >
         {children}
         {optinal && <span className='text-xs text-gray-500 ml-2'>({optinal})</span>}

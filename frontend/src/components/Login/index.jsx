@@ -19,7 +19,7 @@ export default function Login(props) {
 
     return (<>
         <Header {...props} />
-        <div className="pt-[4.5rem] bg-theme-700 text-white pb-12 px-6">
+        <div className="pt-[4.5rem] text-white pb-12 px-6">
             <UserCircleIcon className="text-gray-100 mx-auto w-16 mt-11 mb-8" />
             <h1 className="text-center text-4xl font-medium mb-14">Espace Employé - Connexion</h1>
             <div className="px-6 max-w-xl mx-auto">

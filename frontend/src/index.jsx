@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Route, BrowserRouter as Router } from 'react-router-dom';
+import Account from './components/Account';
 import { AlertContainer } from './components/Alerts';
 import Home from './components/Home';
 import Login from './components/Login';
@@ -73,8 +74,9 @@ function App() {
                     <Route exact path="/to-do-list"><ToDoList {...props} /></Route>
                     <Route exact path="/rules"><Rules {...props} /></Route>
                     <Route exact path="/team"><Team {...props} /></Route>
-
                     <Route exact path="/login"><Login {...props} /></Route>
+
+                    <Route exact path="/account"><Account {...props} /></Route>
                 </Router>
             }
         </>
