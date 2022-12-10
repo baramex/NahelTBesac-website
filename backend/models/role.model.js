@@ -6,7 +6,8 @@ const PERMISSIONS = {
     EDIT_PROFILES: 2,
     CREATE_PROFILE: 3,
     CREATE_REPORT: 4,
-    VIEW_REPORTS: 5
+    VIEW_REPORTS: 5,
+    VIEW_ROLES: 6
 };
 
 const roleSchema = new Schema({
