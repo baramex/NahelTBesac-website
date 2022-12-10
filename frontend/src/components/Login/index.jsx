@@ -11,7 +11,7 @@ export default function Login(props) {
     const history = useHistory();
 
     useEffect(() => {
-        if (props.user) history.push("/account/@me");
+        if (props.user) history.push("/user/@me");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -61,7 +61,7 @@ async function handleLogin(e, addAlert, setUser, history) {
         const user = await login(email, password);
         setUser(user);
 
-        history.push("/account/@me");
+        history.push("/user/@me");
     } catch (error) {
         addAlert({ type: "error", title: error.message || "Une erreur est survenue.", ephemeral: true });
         elements.forEach(el => el.disabled = false);

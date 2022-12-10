@@ -7,7 +7,7 @@ import { Link, useHistory } from "react-router-dom";
 import { logout } from "../../lib/service/authentification";
 
 const userNavigation = [
-    [{ Icon: UserIcon, name: 'Mon compte', href: '/account/@me' }, { Icon: ArchiveBoxIcon, name: 'Rapport du Soir', href: '/account/@me?newReport' }],
+    [{ Icon: UserIcon, name: 'Mon compte', href: '/user/@me' }, { Icon: ArchiveBoxIcon, name: 'Rapport du Soir', href: '/user/@me?newReport' }],
     [{ Icon: ArrowLeftOnRectangleIcon, name: 'Se déconnecter', onClick: handleLogout, color: "text-red-600", iconColor: "text-red-600", colorHover: "text-red-700", iconColorHover: "group-hover:text-red-700" }],
 ];
 
@@ -80,7 +80,7 @@ async function handleLogout(e, setUser, addAlert, history) {
         await logout();
         setUser(null);
         addAlert({ type: "success", title: "Déconnecté.", ephemeral: true });
-        if (document.location.pathname.startsWith("/account")) history.push("/");
+        if (document.location.pathname.startsWith("/user")) history.push("/");
     } catch (error) {
         addAlert({ type: "error", title: "Erreur lors de la déconnexion: " + (error.message || "Une erreur est survenue."), ephemeral: true });
     }

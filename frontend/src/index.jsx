@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { Route, BrowserRouter as Router } from 'react-router-dom';
+import { Route, BrowserRouter as Router, useHistory } from 'react-router-dom';
 import Account from './components/Account';
 import { AlertContainer } from './components/Misc/Alerts';
 import Home from './components/Home';
@@ -76,9 +76,21 @@ function App() {
                     <Route exact path="/team"><Team {...props} /></Route>
                     <Route exact path="/login"><Login {...props} /></Route>
 
-                    <Route exact path="/account/:id"><Account {...props} /></Route>
+                    <Route exact path="/user"><Redirect to={"/user/@me"} /></Route>
+                    <Route exact path="/user/:id"><Account {...props} /></Route>
                 </Router>
             }
         </>
     );
+}
+
+function Redirect({ to }) {
+    const history = useHistory();
+
+    useEffect(() => {
+        history.replace(to);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return null;
 }

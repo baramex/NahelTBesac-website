@@ -9,7 +9,7 @@ const router = require("express").Router();
 router.post("/logout", SessionMiddleware.requiresValidAuthExpress, async (req, res) => {
     try {
         await Session.disable(req.session);
-        res.clearCookie("token").sendStatus(200);
+        res.clearCookie("token").clearCookie("refreshToken").sendStatus(200);
     } catch (error) {
         console.error(error);
         res.status(400).send(error.message || "Une erreur est survenue.");

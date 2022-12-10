@@ -1,5 +1,6 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
+import Loading from "./Loading";
 
 export default function Table({ className, name, description, addButton, head, rows }) {
     return (<div className={className}>
@@ -41,7 +42,7 @@ export default function Table({ className, name, description, addButton, head, r
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                            {rows ? rows.map((row) => (
+                            {rows?.length > 0 ? rows.map((row) => (
                                 <tr key={row[0]}>
                                     {row.map((a, i) =>
                                         <td key={i} className={clsx(i === 0 ? "py-4 pr-3 font-medium text-white" : "px-3 py-4 text-gray-100", "text-sm whitespace-nowrap")}>
@@ -49,7 +50,7 @@ export default function Table({ className, name, description, addButton, head, r
                                         </td>
                                     )}
                                 </tr>
-                            )) : <tr><td colSpan={head.length} className="py-4 px-3 text-center text-gray-100 text-sm">Aucune donnée.</td></tr>}
+                            )) : <tr><td colSpan={head.length} className="py-4 px-3 text-center text-gray-100 text-sm">{!rows ? <div className="flex justify-center"><Loading /></div> : "Aucune donnée."}</td></tr>}
                         </tbody>
                     </table>
                 </div>
