@@ -3,6 +3,7 @@ const { Profile, ProfileMiddleware } = require('../models/profile.model');
 const { PERMISSIONS } = require('../models/role.model');
 const { SessionMiddleware } = require('../models/session.model');
 const { rateLimit } = require("express-rate-limit");
+const { Report } = require('../models/report.model');
 
 const router = require('express').Router();
 
@@ -23,9 +24,9 @@ router.post("/", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.r
 });
 
 // get profile
-router.get("/:id", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.parseParamsProfile(), async (req, res) => {
+router.get("/:id", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.parseParamsProfile(PERMISSIONS.VIEW_PROFILES), async (req, res) => {
     try {
-        res.status(200).send(Profile.getProfileFields(req.paramsProfile, Profile.hasPermission(req.profile, PERMISSIONS.VIEW_PROFILE) || req.paramsProfile._id.equals(req.profile._id)));
+        res.status(200).send(Profile.getProfileFields(req.paramsProfile, true));
     } catch (error) {
         console.error(error);
         res.status(400).send(error.message || "Une erreur est survenue.");
@@ -38,7 +39,7 @@ router.patch("/:id", rateLimit({
     max: 10,
     standardHeaders: true,
     legacyHeaders: false
-}), SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.parseParamsProfile(PERMISSIONS.EDIT_PROFILE), async (req, res) => {
+}), SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.parseParamsProfile(PERMISSIONS.EDIT_PROFILES), async (req, res) => {
     try {
         if (!req.body) throw new Error("Requête invalide.");
         const profile = req.paramsProfile;
@@ -61,6 +62,18 @@ router.patch("/:id", rateLimit({
         await (await profile.save({ validateBeforeSave: true })).populate("role");
 
         res.status(200).send(Profile.getProfileFields(profile, true));
+    } catch (error) {
+        console.error(error);
+        res.status(400).send(error.message || "Une erreur est survenue.");
+    }
+});
+
+// get reports
+router.get("/:id/reports", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.parseParamsProfile(PERMISSIONS.VIEW_PROFILES, PERMISSIONS.VIEW_REPORTS), async (req, res) => {
+    try {
+        const profile = req.paramsProfile;
+        const reports = await Report.getByProfileId(profile._id);
+        res.status(200).json(reports);
     } catch (error) {
         console.error(error);
         res.status(400).send(error.message || "Une erreur est survenue.");

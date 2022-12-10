@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Route, BrowserRouter as Router } from 'react-router-dom';
 import Account from './components/Account';
-import { AlertContainer } from './components/Alerts';
+import { AlertContainer } from './components/Misc/Alerts';
 import Home from './components/Home';
 import Login from './components/Login';
 import Rules from './components/Rules';
@@ -76,7 +76,7 @@ function App() {
                     <Route exact path="/team"><Team {...props} /></Route>
                     <Route exact path="/login"><Login {...props} /></Route>
 
-                    <Route exact path="/account"><Account {...props} /></Route>
+                    <Route exact path="/account/:id"><Account {...props} /></Route>
                 </Router>
             }
         </>

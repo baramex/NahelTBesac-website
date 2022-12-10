@@ -1,4 +1,4 @@
-import { Check } from "../Icons";
+import { Check } from "../Images/Icons";
 import Footer from "../Layout/Footer";
 import Header from "../Layout/Header";
 

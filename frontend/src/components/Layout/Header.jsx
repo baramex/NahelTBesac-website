@@ -4,7 +4,7 @@ import { Popover, Transition } from '@headlessui/react'
 import { Link } from "react-router-dom";
 import clsx from 'clsx';
 import { Fragment } from "react";
-import UserMenu from "../User/UserMenu";
+import UserMenu from "../Misc/UserMenu";
 
 function MobileNavLink({ href, children }) {
     return (

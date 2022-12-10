@@ -7,7 +7,7 @@ import { Link, useHistory } from "react-router-dom";
 import { logout } from "../../lib/service/authentification";
 
 const userNavigation = [
-    [{ Icon: UserIcon, name: 'Mon compte', href: '/account' }, { Icon: ArchiveBoxIcon, name: 'Rapport du Soir', href: '/account/evening-report' }],
+    [{ Icon: UserIcon, name: 'Mon compte', href: '/account/@me' }, { Icon: ArchiveBoxIcon, name: 'Rapport du Soir', href: '/account/@me?newReport' }],
     [{ Icon: ArrowLeftOnRectangleIcon, name: 'Se déconnecter', onClick: handleLogout, color: "text-red-600", iconColor: "text-red-600", colorHover: "text-red-700", iconColorHover: "group-hover:text-red-700" }],
 ];
 

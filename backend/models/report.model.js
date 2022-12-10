@@ -29,9 +29,7 @@ const ReportModel = model("Report", reportSchema, "reports");
 class Report {
     static populate = {
         path: "profile",
-        populate: {
-            path: "role"
-        }
+        select: "name"
     };
 
     static async create(profileId, round, opinion, mileage, petrol, packetNotDelivered) {
@@ -49,6 +47,10 @@ class Report {
 
         return ReportModel.find({ date: { $gte: dayBefore } }).populate(Report.populate);
     }
+
+    static get(query) {
+        return ReportModel.find(query).populate(Report.populate);
+    }
 }
 
-module.exports = { Report, PERMISSIONS }
+module.exports = { Report }

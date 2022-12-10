@@ -77,7 +77,7 @@ class ProfileMiddleware {
                 const id = req.params.id;
                 if (!id || (id == "@me" ? false : !ObjectId.isValid(id))) throw new Error("Requête invalide.");
 
-                if (id == "@me" ? !req.profile : !Profile.hasPermission(req.profile, ...permissions)) throw new CustomError("Non autorisé.", 403);
+                if ((id == "@me" || req.profile?._id == id) ? !req.profile : !Profile.hasPermission(req.profile, ...permissions)) throw new CustomError("Non autorisé.", 403);
 
                 if (id == "@me" || id == req.profile?._id) req.paramsProfile = req.profile;
                 else {

@@ -2,9 +2,11 @@ const { Schema, model } = require("mongoose");
 
 const PERMISSIONS = {
     ALL: 0,
-    VIEW_PROFILE: 1,
-    EDIT_PROFILE: 2,
-    CREATE_PROFILE: 3
+    VIEW_PROFILES: 1,
+    EDIT_PROFILES: 2,
+    CREATE_PROFILE: 3,
+    CREATE_REPORT: 4,
+    VIEW_REPORTS: 5
 };
 
 const roleSchema = new Schema({

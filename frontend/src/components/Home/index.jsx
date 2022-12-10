@@ -1,6 +1,6 @@
 import Footer from "../Layout/Footer";
 import Header from "../Layout/Header";
-import Carousel from "../Carousel";
+import Carousel from "../Misc/Carousel";
 
 import wheel from "../../images/carousel/wheel.jpg";
 import trucks from "../../images/carousel/trucks.jpg";
