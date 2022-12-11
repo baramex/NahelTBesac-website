@@ -7,7 +7,7 @@ const fieldClassname = {
     theme: "block w-full bg-theme-50 [[changed_&]]:border-blue-400 focus:[[changed_&]]:border-blue-500 [&:not([empty])]:invalid:border-red-500 [&:not([empty])]:invalid:focus:border-red-600 disabled:cursor-not-allowed disabled:bg-theme-50 disabled:text-theme-500 shadow-sm rounded-md border border-theme-200 px-3 py-2.5 text-theme-800 placeholder-gray-400 transition-colors focus:border-theme-300 focus:outline-none focus:ring-0 sm:text-sm",
 };
 
-export function Label({ optinal, children, variant, className, id }) {
+export function Label({ optinal, children, variant="white", className, id }) {
     return (<label
         htmlFor={id}
         className={clsx("mb-2 block text-sm font-medium", variant === "white" ? "text-white" : "text-theme-800", className)}
@@ -17,7 +17,7 @@ export function Label({ optinal, children, variant, className, id }) {
     </label>);
 }
 
-export function Field({ Element, defaultValue = "", className, showChanged, variant, forwardRef, ...props }) {
+export function Field({ Element, defaultValue = "", className, showChanged, variant="white", forwardRef, ...props }) {
     const [value, setValue] = useState(defaultValue);
 
     useEffect(() => {
@@ -37,7 +37,7 @@ export function TextField({
     className = '',
     inputClassName = '',
     optinal,
-    variant = "white",
+    variant,
     ...props
 }) {
     const [showPassword, setShowPassword] = useState(false);

@@ -4,8 +4,8 @@ export function fetchUser(id = "@me") {
     return api("/profile/" + id, "get")
 }
 
-export function pacthUser(data) {
-    return api("/profile/@me", "patch", data);
+export function pacthUser(profile = "@me", data) {
+    return api("/profile/" + profile, "patch", data);
 }
 
 export function fetchUsers() {

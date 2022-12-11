@@ -35,7 +35,7 @@ export default function Table({ className, onClick, name, description, clickable
         <div className="mt-8 flex flex-col">
             <div className="overflow-x-auto">
                 <div className="inline-block min-w-full py-2 align-middle">
-                    <table className="min-w-full divide-y divide-gray-300">
+                    <table className="min-w-full divide-y divide-theme-50">
                         <thead>
                             <tr>
                                 {head.map((a, i) =>
@@ -45,10 +45,10 @@ export default function Table({ className, onClick, name, description, clickable
                                 )}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody className="divide-y divide-theme-500">
                             {rows?.length > 0 ? rows.map((row) => (
-                                <tr key={row[0]} className={clsx(clickable && row.at(-1) ? "cursor-pointer hover:bg-theme-200/20" : "")} onClick={clickable && row.at(-1) ? () => history.push(row.at(-1)) : null} role={clickable && row.at(-1) ? "link" : undefined}>
-                                    {row.slice(0, clickable ? row.length - 1 : row.length).map((a, i) =>
+                                <tr key={row[0]} className={clsx(clickable && row.at(-1) ? "cursor-pointer transition-colors hover:bg-theme-200/10" : "")} onClick={clickable && row.at(-1) ? () => history.push(row.at(-1)) : null} role={clickable && row.at(-1) ? "link" : undefined}>
+                                    {row.slice(1, clickable ? row.length - 1 : row.length).map((a, i) =>
                                         <td key={i} className={clsx(i === 0 ? "py-4 pr-3 pl-2 font-medium text-white" : "px-3 py-4 text-gray-100", "text-sm whitespace-nowrap")}>
                                             {a}
                                         </td>
