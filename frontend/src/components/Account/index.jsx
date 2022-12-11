@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { fetchData } from "../../lib/service";
 import { fetchRoles } from "../../lib/service/misc";
-import { fetchUser, pacthUser } from "../../lib/service/profile";
+import { fetchUser, fetchUsers, pacthUser } from "../../lib/service/profile";
 import { fetchReports, fetchReportsQuery } from "../../lib/service/report";
 import { formatDate } from "../../lib/utils/date";
 import { hasPermission, PERMISSIONS } from "../../lib/utils/permissions";
@@ -15,6 +15,7 @@ import Header from "../Layout/Header";
 import { Field } from "../Misc/Fields";
 import Loading from "../Misc/Loading";
 import Table from "../Misc/Tables";
+import CreateAccountModal from "../Modals/CreateAccount";
 
 export default function Account(props) {
     const { id } = useParams();
@@ -35,6 +36,8 @@ export default function Account(props) {
 
     const canCreateReport = hasPermission(user, PERMISSIONS.CREATE_REPORT);
 
+    const [newAccount, setNewAccount] = useState(false);
+
     useEffect(() => {
         if (isMe) setUser(props.user);
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,13 +54,15 @@ export default function Account(props) {
 
                 fetchData(props.addAlert, setDayBefireReports, fetchReportsQuery, true, { startDate: formatDate(dayBefore) });
             }
-            if (!staff && canViewProfiles && isMe) fetchData(props.addAlert, setStaff, fetchUser);
+            if (!staff && canViewProfiles && isMe) fetchData(props.addAlert, setStaff, fetchUsers);
             if (!roles && canEditProfiles && canViewRoles) fetchData(props.addAlert, setRoles, fetchRoles);
         } else history.replace("/login");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     return (<>
+        <CreateAccountModal roles={roles} onClose={() => setNewAccount(false)} open={newAccount} />
+
         <Header {...props} />
         <div className="pt-[4.5rem] text-white pb-12 px-6 max-w-7xl mx-auto pb-16">
             {!user ? (user === 0 || !canViewProfiles) ? <p className="text-center mt-8 font-medium"><ExclamationTriangleIcon className="w-6 inline mr-2" />{canViewProfiles ? "Utilisateur introuvable" : "Non autorisé"}</p> : <div className="mt-8 flex justify-center"><Loading /></div> : <>
@@ -94,7 +99,6 @@ export default function Account(props) {
                                 isMe={isMe}
 
                                 canUpdate={canEditProfiles}
-                                type="text"
                                 Element="select"
                                 formatProperty={v => ({ role: roles?.find(role => role.name === v)?._id })}
                             >
@@ -132,8 +136,22 @@ export default function Account(props) {
                     <Table
                         className="mt-10"
                         name="Rapports depuis Hier"
+                        description="Tous les rapports remplis depuis hier matin."
                         head={["Livreur", "Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
                         rows={dayBeforeReports && dayBeforeReports.map(a => [<div className="items-center flex">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 ml-2 stroke-gray-100" /></Link></div>, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetNotDelivered.length}<Triangle className="w-3 ml-2 stroke-gray-100" /></div>, a.mileage + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.petrol} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
+                    />
+                }
+
+                {canViewProfiles && isMe &&
+                    <Table
+                        className="mt-10"
+                        name="Personnel"
+                        addButton="Ajouter"
+                        onClick={() => setNewAccount(true)}
+                        head={["Nom/prénom", "Fonction", "Email", "Dernier rapport"]}
+                        description="Ajouter, modifier et supprimer des comptes."
+                        clickable={true}
+                        rows={staff && staff.map(a => [<>{a.name.lastname} {a.name.firstname} {isMe && <span className="text-xs font-normal text-gray-200">(vous)</span>}</>, a.role.name, a.email, hasPermission(a, PERMISSIONS.CREATE_REPORT) ? reports ? formatDate(reports.find(b => b.profile._id === a._id)?.date) || "--" : "--" : "--", !isMe && `/user/${a._id}`])}
                     />
                 }
             </>
@@ -150,7 +168,7 @@ function EditableField({ label, value, canUpdate, setUser, addAlert, isMe, child
     return (<div className="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-3 flex items-center h-14">
         <dt className="text-sm font-medium text-white">{label}</dt>
         <dd className="mt-1 flex text-sm text-gray-100 sm:col-span-2 sm:mt-0 items-center">
-            {edit ? <span className="flex-grow"><Field forwardRef={input} className="w-1/2 !py-1 border-theme-500 !text-gray-100 !bg-theme-700" defaultValue={value} {...props}>{children}</Field></span> : <span className="flex-grow">{value}</span>}
+            {edit ? <span className="flex-grow"><Field forwardRef={input} className="!w-1/2 !py-1 !border-theme-500 !text-gray-100 !bg-theme-700" defaultValue={value} {...props}>{children}</Field></span> : <span className="flex-grow">{value}</span>}
             {canUpdate &&
                 <span className="ml-4 flex-shrink-0 flex gap-5">
                     {edit && <button

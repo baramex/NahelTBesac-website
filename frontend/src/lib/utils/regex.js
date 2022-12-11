@@ -27,6 +27,10 @@ export function handleFullnameInput(e) {
     e.target.value = (firstpart ? firstpart.toUpperCase().replace(/[^a-zA-ZÀ-ÿ]/g, "") : "") + lastchar + (secondpart ? " " + (secondpart[0].toUpperCase() + secondpart.slice(1).toLowerCase()).replace(/[^a-zA-ZÀ-ÿ]/g, "") : "");
 }
 
+export function isValidPassword(password) {
+    return passwordRegex.total.test(password);
+}
+
 export function getPasswordErrors(password) {
     const errors = [];
     if (!passwordRegex.length.test(password)) errors.push("Entre 6 et 32 caractères.");

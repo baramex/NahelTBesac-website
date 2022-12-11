@@ -37,19 +37,11 @@ class Report {
     }
 
     static getByProfileId(profileId) {
-        return ReportModel.find({ profile: profileId }).populate(Report.populate);
-    }
-
-    static getFromDayBefore() {
-        const dayBefore = new Date();
-        dayBefore.setDate(dayBefore.getDate() - 1);
-        dayBefore.setHours(0, 0, 0, 0);
-
-        return ReportModel.find({ date: { $gte: dayBefore } }).populate(Report.populate);
+        return ReportModel.find({ profile: profileId }, {}, { sort: { date: 1 } }).populate(Report.populate);
     }
 
     static get(query) {
-        return ReportModel.find(query).populate(Report.populate);
+        return ReportModel.find(query, {}, { sort: { date: 1 } }).populate(Report.populate);
     }
 }
 

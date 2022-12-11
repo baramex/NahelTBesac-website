@@ -1,8 +1,11 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
+import { useHistory } from "react-router-dom";
 import Loading from "./Loading";
 
-export default function Table({ className, name, description, addButton, head, rows }) {
+export default function Table({ className, onClick, name, description, clickable, addButton, head, rows }) {
+    const history = useHistory();
+
     return (<div className={className}>
         {(name || addButton) &&
             <div className="sm:flex sm:items-center">
@@ -21,6 +24,7 @@ export default function Table({ className, name, description, addButton, head, r
                         <button
                             type="button"
                             className="transition-colors flex items-center rounded-md border border-theme-50 px-3 py-1.5 text-sm font-medium text-theme-50 shadow-sm hover:border-theme-200 hover:text-theme-100 focus:outline-none sm:w-auto"
+                            onClick={onClick}
                         >
                             <PlusIcon className="w-5 mr-1" /><span>{addButton}</span>
                         </button>
@@ -43,9 +47,9 @@ export default function Table({ className, name, description, addButton, head, r
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                             {rows?.length > 0 ? rows.map((row) => (
-                                <tr key={row[0]}>
-                                    {row.map((a, i) =>
-                                        <td key={i} className={clsx(i === 0 ? "py-4 pr-3 font-medium text-white" : "px-3 py-4 text-gray-100", "text-sm whitespace-nowrap")}>
+                                <tr key={row[0]} className={clsx(clickable && row.at(-1) ? "cursor-pointer hover:bg-theme-200/20" : "")} onClick={clickable && row.at(-1) ? () => history.push(row.at(-1)) : null} role={clickable && row.at(-1) ? "link" : undefined}>
+                                    {row.slice(0, clickable ? row.length - 1 : row.length).map((a, i) =>
+                                        <td key={i} className={clsx(i === 0 ? "py-4 pr-3 pl-2 font-medium text-white" : "px-3 py-4 text-gray-100", "text-sm whitespace-nowrap")}>
                                             {a}
                                         </td>
                                     )}
@@ -56,5 +60,5 @@ export default function Table({ className, name, description, addButton, head, r
                 </div>
             </div>
         </div>
-    </div>)
+    </div >)
 }

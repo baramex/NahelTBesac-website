@@ -7,8 +7,19 @@ const { Report } = require('../models/report.model');
 
 const router = require('express').Router();
 
+// get profiles
+router.get("/profiles", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.requiresPermissions(PERMISSIONS.VIEW_PROFILES), async (req, res) => {
+    try {
+        const profiles = await Profile.getAll();
+        res.status(200).json(profiles.map(profile => Profile.getProfileFields(profile, true)));
+    } catch (error) {
+        console.error(error);
+        res.status(400).send(error.message || "Une erreur est survenue.");
+    }
+});
+
 // create profile
-router.post("/", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.requiresPermissions(PERMISSIONS.CREATE_PROFILE), async (req, res) => {
+router.post("/profile", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.requiresPermissions(PERMISSIONS.CREATE_PROFILE), async (req, res) => {
     try {
         if (!req.body) throw new Error("Requête invalide.");
 
@@ -24,7 +35,7 @@ router.post("/", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.r
 });
 
 // get profile
-router.get("/:id", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.parseParamsProfile(PERMISSIONS.VIEW_PROFILES), async (req, res) => {
+router.get("/profile/:id", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.parseParamsProfile(PERMISSIONS.VIEW_PROFILES), async (req, res) => {
     try {
         res.status(200).send(Profile.getProfileFields(req.paramsProfile, true));
     } catch (error) {
@@ -34,7 +45,7 @@ router.get("/:id", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware
 });
 
 // patch profile
-router.patch("/:id", rateLimit({
+router.patch("/profile/:id", rateLimit({
     windowMs: 1000 * 30,
     max: 10,
     standardHeaders: true,
@@ -69,7 +80,7 @@ router.patch("/:id", rateLimit({
 });
 
 // get reports
-router.get("/:id/reports", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.parseParamsProfile(PERMISSIONS.VIEW_PROFILES, PERMISSIONS.VIEW_REPORTS), async (req, res) => {
+router.get("/profile/:id/reports", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.parseParamsProfile(PERMISSIONS.VIEW_PROFILES, PERMISSIONS.VIEW_REPORTS), async (req, res) => {
     try {
         const profile = req.paramsProfile;
         const reports = await Report.getByProfileId(profile._id);

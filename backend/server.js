@@ -40,7 +40,7 @@ app.listen(PORT, () => {
 });
 
 /* mail */
-const { createTransport, createTestAccount } = require("nodemailer");
+/*const { createTransport, createTestAccount } = require("nodemailer");
 let mail = { transporter: null };
 createTestAccount().then(mailAccount => {
     mail.transporter = createTransport({
@@ -52,7 +52,7 @@ createTestAccount().then(mailAccount => {
             pass: mailAccount.pass,
         }
     });
-});
+});*/
 // TOEDIT
 const header = `
 <div style="background-color: #10b981;width: 100%;text-align: center;padding: 20px 0 50px 0;">
@@ -73,4 +73,4 @@ class CustomError extends Error {
     }
 }
 
-module.exports = { app, upload, header, footer, mail, CustomError };
+module.exports = { app, upload, header, footer, CustomError };
