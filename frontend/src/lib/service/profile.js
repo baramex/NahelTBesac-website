@@ -11,3 +11,7 @@ export function pacthUser(profile = "@me", data) {
 export function fetchUsers() {
     return api("/profiles", "get");
 }
+
+export function deleteUser(id) {
+    return api("/profile/" + id, "delete");
+}

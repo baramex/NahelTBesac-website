@@ -37,11 +37,11 @@ class Report {
     }
 
     static getByProfileId(profileId) {
-        return ReportModel.find({ profile: profileId }, {}, { sort: { date: 1 } }).populate(Report.populate);
+        return ReportModel.find({ profile: profileId }, {}, { sort: { date: 1 } }).populate(Report.populate).exists("profile", true); // TODO: check if exists works
     }
 
     static get(query) {
-        return ReportModel.find(query, {}, { sort: { date: 1 } }).populate(Report.populate);
+        return ReportModel.find(query, {}, { sort: { date: 1 } }).populate(Report.populate).exists("profile", true);
     }
 }
 

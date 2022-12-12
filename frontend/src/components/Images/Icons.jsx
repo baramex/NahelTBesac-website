@@ -15,6 +15,9 @@ export function Triangle(props) {
 
 
 export function FuelGauge({ percentage, ...props }) {
+    if (percentage < 0) percentage = 0;
+    else if (percentage > 100) percentage = 100;
+    
     return (<svg viewBox="15 15 70 55" {...props}>
         <LineOnCircleToCenter cx="50" cy="60" r="45" l="10" angle={degToRad(90)} stroke="currentColor" strokeWidth="3" />
         <LineOnCircleToCenter cx="50" cy="60" r="45" l="8" angle={degToRad(70)} stroke="currentColor" strokeWidth="2" />

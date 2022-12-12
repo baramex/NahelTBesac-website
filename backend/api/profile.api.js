@@ -91,4 +91,16 @@ router.get("/profile/:id/reports", SessionMiddleware.requiresValidAuthExpress, P
     }
 });
 
+// delete profile
+router.delete("/profile/:id", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.parseParamsProfile(PERMISSIONS.EDIT_PROFILES), async (req, res) => {
+    try {
+        const profile = req.paramsProfile;
+        await profile.delete();
+        res.sendStatus(200);
+    } catch (error) {
+        console.error(error);
+        res.status(400).send(error.message || "Une erreur est survenue.");
+    }
+});
+
 module.exports = router;

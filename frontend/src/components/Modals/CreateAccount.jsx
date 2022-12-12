@@ -71,7 +71,7 @@ export default function CreateAccountModal({ open, addAlert, roles, onClose }) {
                             required
                         />
                         <div className="col-span-full">
-                            <Label>Fonction</Label>
+                            <Label variant="theme">Fonction</Label>
                             <Field
                                 Element="select"
                                 placeholder="Fonction"
@@ -87,7 +87,7 @@ export default function CreateAccountModal({ open, addAlert, roles, onClose }) {
                             </Field>
                         </div>
                         <div className="col-span-full">
-                            <Label>Mot de Passe</Label>
+                            <Label variant="theme">Mot de Passe</Label>
                             <div className="grid grid-cols-3 gap-4">
                                 <TextField
                                     className="col-span-2"
@@ -102,14 +102,14 @@ export default function CreateAccountModal({ open, addAlert, roles, onClose }) {
                                     onInput={e => handlePasswordInput(e, setErrors)}
                                     required
                                 />
-                                <button onClick={() => generatePassword(passwordField)} type="button" className="transition-colors hover:border-theme-400 hover:text-theme-900 bg-theme-100 border border-theme-300 text-theme-800 rounded-md text-sm text-white flex items-center justify-center"><ArrowPathIcon className="w-4 mr-2" />Générer</button>
+                                <button onClick={() => generatePassword(passwordField)} type="button" className="transition-colors hover:border-theme-400 hover:text-theme-900 bg-theme-100 focus:outline-none border border-theme-300 text-theme-800 rounded-md text-sm text-white flex items-center justify-center"><ArrowPathIcon className="w-4 mr-2" />Générer</button>
                             </div>
                         </div>
                         {errors && <AlertError className="col-span-full" title={errors[0]} list={errors.slice(1)} canClose={false} onClose={() => setErrors(null)} />}
                         <div className="col-span-full mt-3 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-6">
                             <button
                                 type="button"
-                                className="transition-colors w-full rounded-md border border-red-500 py-1.5 text-red-500 hover:bg-red-50 hover:border-red-600 hover:text-red-600"
+                                className="transition-colors focus:outline-none w-full rounded-md border border-red-500 py-1.5 text-red-500 hover:bg-red-50 hover:border-red-600 hover:text-red-600"
                                 onClick={() => onClose(false)}
                             >
                                 Annuler
@@ -117,7 +117,7 @@ export default function CreateAccountModal({ open, addAlert, roles, onClose }) {
                             <button
                                 type="submit"
                                 name="submit"
-                                className="w-full rounded-md bg-theme-500 text-white py-1.5 hover:bg-theme-600 transition-colors"
+                                className="w-full rounded-md focus:outline-none bg-theme-500 text-white py-1.5 hover:bg-theme-600 transition-colors"
                             >
                                 Enregistrer
                             </button>
@@ -152,7 +152,7 @@ async function handleSubmit(e, addAlert, onClose) {
     try {
         const user = await register({ email, name: { firstname, lastname }, password, role });
         onClose(user);
-        addAlert({ type: "success", title: "Utilisateur créé avec succès.", ephemeral: true });
+        addAlert({ type: "success", title: "Le compte a bien été créé.", ephemeral: true });
     } catch (error) {
         addAlert({ type: "error", title: error.message || "Une erreur est survenue.", ephemeral: true });
         elements.forEach(el => el.disabled = false);

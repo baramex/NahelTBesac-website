@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { fetchData } from "../../lib/service";
 import { fetchRoles } from "../../lib/service/misc";
-import { fetchUser, fetchUsers, pacthUser } from "../../lib/service/profile";
+import { deleteUser, fetchUser, fetchUsers, pacthUser } from "../../lib/service/profile";
 import { fetchReports, fetchReportsQuery } from "../../lib/service/report";
 import { formatDate } from "../../lib/utils/date";
 import { hasPermission, PERMISSIONS } from "../../lib/utils/permissions";
@@ -16,7 +16,9 @@ import Header from "../Layout/Header";
 import { Field } from "../Misc/Fields";
 import Loading from "../Misc/Loading";
 import Table from "../Misc/Tables";
+import ConfirmModal from "../Modals/Confirm";
 import CreateAccountModal from "../Modals/CreateAccount";
+import CreateReportModal from "../Modals/CreateReport";
 
 export default function Account(props) {
     const { id } = useParams();
@@ -38,11 +40,12 @@ export default function Account(props) {
     const canCreateReport = hasPermission(user, PERMISSIONS.CREATE_REPORT);
 
     const [newAccount, setNewAccount] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(false);
+    const [createReport, setCreateReport] = useState(false);
 
     useEffect(() => {
         if (isMe && ((user && user._id !== props.user._id) || !user)) setUser(props.user);
         if (!isMe && user && user._id !== id) setUser(null);
-        if (reports && user && canCreateReport) fetchData(props.addAlert, setReports, fetchReports, true, user._id);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
@@ -54,7 +57,8 @@ export default function Account(props) {
     useEffect(() => {
         if (props.user) {
             if (!user && user !== 0 && canViewProfiles) fetchData(() => setUser(0), setUser, fetchUser, true, id);
-            if (!reports && canCreateReport) fetchData(props.addAlert, setReports, fetchReports, true, user._id);
+            if ((!reports || (reports[0]?.profile?._id !== id && user?._id === id)) && canCreateReport) fetchData(props.addAlert, setReports, fetchReports, true, id);
+
             if (!dayBeforeReports && canViewReports && isMe) {
                 const dayBefore = new Date();
                 dayBefore.setDate(dayBefore.getDate() - 1);
@@ -75,6 +79,8 @@ export default function Account(props) {
             }
             setNewAccount(false);
         }} open={newAccount} />
+        <ConfirmModal open={confirmDelete} message="Êtes-vous sûr de vouloir supprimer ce compte ?" onClose={setConfirmDelete} onConfirm={() => handleDelete(id, props.addAlert, history, setStaff, setConfirmDelete, setUser)} title="Suppression de Compte" />
+        <CreateReportModal addAlert={props.addAlert} open={createReport} onClose={setCreateReport} />
 
         <Header {...props} />
         <div className="pt-[4.5rem] text-white pb-12 px-6 max-w-7xl mx-auto pb-16">
@@ -153,6 +159,7 @@ export default function Account(props) {
                         </dl>
                     </div>
                 </div>
+                {!isMe && canEditProfiles && <button onClick={() => setConfirmDelete(true)} className="transition-colors focus:outline-none border border-red-400 py-1 px-2 rounded-md text-sm text-red-400 mt-2 hover:text-red-500 hover:border-red-500">Supprimer le Compte</button>}
 
                 {canCreateReport &&
                     <Table
@@ -160,6 +167,7 @@ export default function Account(props) {
                         name="Rapports du Soir"
                         description="Vous pouvez remplir un rapport par jour."
                         addButton={isMe && "Nouveau"}
+                        onClick={() => setCreateReport(true)}
                         head={["Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
                         rows={reports && reports.map(a => [a._id, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetNotDelivered.length}<Triangle className="w-3 ml-2 stroke-gray-100" /></div>, a.mileage + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.petrol} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
                     />
@@ -241,6 +249,19 @@ async function handleSave(profile, data, setUser, addAlert, setEdit, message) {
         setUser(user);
         addAlert({ type: "success", title: message, ephemeral: true });
         setEdit(false);
+    } catch (error) {
+        addAlert({ type: "error", title: error.message || "Une erreur est survenue.", ephemeral: true });
+    }
+}
+
+async function handleDelete(id, addAlert, history, setStaff, setConfirmDelete, setUser) {
+    try {
+        await deleteUser(id);
+        addAlert({ type: "success", title: "Le compte a bien été supprimé.", ephemeral: true });
+        history.replace("/user/@me");
+        setUser(null);
+        setConfirmDelete(false);
+        setStaff(a => a.filter(b => b._id !== id));
     } catch (error) {
         addAlert({ type: "error", title: error.message || "Une erreur est survenue.", ephemeral: true });
     }

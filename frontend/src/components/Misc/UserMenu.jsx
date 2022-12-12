@@ -58,7 +58,7 @@ export default function UserMenu({ user, setUser, addAlert }) {
                                             className={clsx(
                                                 active ? 'bg-gray-100' : item.color || 'text-gray-700',
                                                 active ? item.colorHover || "text-gray-800" : "",
-                                                'group flex items-center px-4 py-2 text-sm w-full',
+                                                'group flex items-center px-4 py-2 text-sm w-full focus:outline-none',
                                                 item.className
                                             )}
                                         >
