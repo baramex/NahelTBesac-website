@@ -206,7 +206,7 @@ export default function Account(props) {
                         head={["Nom/prénom", "Fonction", "Email", "Dernier rapport"]}
                         description="Ajouter, modifier et supprimer des comptes."
                         clickable={true}
-                        rows={staff && staff.map(a => [a._id, <>{a.name.lastname} {a.name.firstname} {a._id === props.user._id && <span className="text-xs font-normal text-gray-200">(vous)</span>}</>, a.role.name, a.email, hasPermission(a, PERMISSIONS.CREATE_REPORT) ? dayBeforeReports ? formatDate(dayBeforeReports.find(b => b.profile._id === a._id)?.date) || "--" : "--" : "--", a._id !== props.user._id && `/user/${a._id}`])}
+                        rows={staff && staff.map(a => [a._id, <>{a.name.lastname} {a.name.firstname} {a._id === props.user._id && <span className="text-xs font-normal text-gray-200">(vous)</span>}</>, a.role.name, a.email, hasPermission(a, PERMISSIONS.CREATE_REPORT) ? dayBeforeReports && dayBeforeReports.find(b => b.profile._id === a._id) ? new Date(dayBeforeReports.find(b => b.profile._id === a._id)?.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" }) || "--" : "--" : "--", a._id !== props.user._id && `/user/${a._id}`])}
                     />
                 }
             </>

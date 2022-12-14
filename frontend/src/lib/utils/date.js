@@ -16,6 +16,7 @@ function padTo2Digits(num) {
 
 export function formatDate(date) {
     if (!date) return null;
+    if(typeof date === 'string' || typeof date === "number") date = new Date(date);
     return [
         padTo2Digits(date.getMonth() + 1),
         padTo2Digits(date.getDate()),

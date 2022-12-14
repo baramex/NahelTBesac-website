@@ -126,7 +126,7 @@ function PacketsNotDeliveredContainer() {
 }
 
 function PacketNotDelivered({ id, onRemove }) {
-    // TODO: show photo preview input + upload photo + format km (thousand separator)
+    // TODO: show photo preview input + upload photo + format km (thousand separator) + add pct next to fuel gauge account + add overflow personnal & report
     return (<div className="grid grid-cols-4 gap-5 border border-theme-200 rounded-md bg-theme-50 p-3 relative">
         <button onClick={() => onRemove(id)} type="button" className="absolute top-2 right-2"><XMarkIcon className="w-5 stroke-2 text-theme-500" /></button>
         <SelectMenuField
