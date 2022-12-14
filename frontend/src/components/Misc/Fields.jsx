@@ -69,6 +69,27 @@ export function TextField({
     )
 }
 
+export function SelectMenuField({
+    id,
+    label,
+    className = '',
+    inputClassName = '',
+    optinal,
+    variant,
+    showRequired,
+    children,
+    ...props
+}) {
+    return (
+        <div className={className}>
+            {label && <Label showRequired={showRequired} id={id} variant={variant} optinal={optinal}>{label}</Label>}
+            <Field variant={variant} className={inputClassName} Element="select" id={id} {...props}>
+                {children}
+            </Field>
+        </div >
+    )
+}
+
 export function StarRatingField({
     label,
     className = '',
@@ -91,30 +112,31 @@ export function StarRatingField({
                         onClick={() => setRating(index + 1)}
                         onMouseEnter={() => setHover(index + 1)}
                         onMouseLeave={() => setHover(rating)}
+                        className="focus:outline-none"
                     >
                         {index + 1 <= (hover || rating) ? <StarIcon className="text-theme-500 w-6" /> : <StarIconOutline className="text-theme-400 w-6" />}
                     </button>
                 );
             })}
-            <input min={0} max={5} className="opacity-0 pointer-events-none z-0 absolute top-0 left-0 h-full" type="number" name="star" id="star" value={rating === 0 ? undefined : rating} required={required} />
+            <input min={0} max={5} className="opacity-0 pointer-events-none z-0 absolute top-0 left-0 h-full" type="number" name="star" id="star" onChange={() => { }} value={rating === 0 ? "" : rating} required={required} />
         </div>
     </div>);
 }
 
-export function FuelGaugeField({ variant, className, optinal, showRequired, label, required }) {
+export function FuelGaugeField({ id, variant, className, optinal, showRequired, label, required }) {
     const [fuel, setFuel] = useState(0);
 
-    // TODO: drag
     return (<div className={className}>
         <Label variant={variant} optinal={optinal} showRequired={showRequired}>{label}</Label>
-        <div className="flex items-center gap-2">
-            <FuelGauge percentage={fuel} className="w-20" />
+        <div className="flex items-center gap-3">
+            <FuelGauge percentage={fuel} canChange={true} onChange={setFuel} className="w-20 text-theme-900" />
             <TextField
+                id={id}
                 variant="theme"
                 type="number"
                 inputClassName="!py-1 !w-[5.25rem] pr-7"
                 unit="%"
-                value={fuel}
+                value={String(fuel)}
                 min={0}
                 max={100}
                 onChange={e => setFuel(e.target.value)}

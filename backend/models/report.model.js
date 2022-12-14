@@ -13,8 +13,8 @@ const reportSchema = new Schema({
     round: { type: Number, required: true }, // type ? min ? max ?
     opinion: { type: Number, required: true, min: 1, max: 5 },
     mileage: { type: Number, required: true, min: 0 },
-    petrol: { type: Number, required: true, min: 0, max: 100 },
-    packetNotDelivered: {
+    fuel: { type: Number, required: true, min: 0, max: 100 },
+    packetsNotDelivered: {
         type: [{
             reason: { type: Number, enum: Object.values(NOT_DELIVERED_REASONS) },
             photo: { type: String, required: true },
@@ -32,16 +32,16 @@ class Report {
         select: "name"
     };
 
-    static async create(profileId, round, opinion, mileage, petrol, packetNotDelivered) {
-        return (await new ReportModel({ profile: profileId, round, opinion, mileage, petrol, packetNotDelivered }).save()).populate(Report.populate);
+    static async create(profileId, round, opinion, mileage, fuel, packetsNotDelivered) {
+        return (await new ReportModel({ profile: profileId, round, opinion, mileage, fuel, packetsNotDelivered }).save()).populate(Report.populate);
     }
 
     static getByProfileId(profileId) {
-        return ReportModel.find({ profile: profileId }, {}, { sort: { date: 1 } }).populate(Report.populate).exists("profile", true); // TODO: check if exists works
+        return ReportModel.find({ profile: profileId }, {}, { sort: { date: -1 } }).populate(Report.populate).exists("profile", true); // TODO: check if exists works
     }
 
     static get(query) {
-        return ReportModel.find(query, {}, { sort: { date: 1 } }).populate(Report.populate).exists("profile", true);
+        return ReportModel.find(query, {}, { sort: { date: -1 } }).populate(Report.populate).exists("profile", true);
     }
 }
 

@@ -7,3 +7,7 @@ export function fetchReports(profile = "@me") {
 export function fetchReportsQuery(params) {
     return api("/reports?" + Object.keys(params).map(key => key + '=' + params[key]).join('&'), "GET");
 }
+
+export function createReport(data) {
+    return api("/report", "POST", data);
+}

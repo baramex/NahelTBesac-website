@@ -39,9 +39,18 @@ export default function Account(props) {
 
     const canCreateReport = hasPermission(user, PERMISSIONS.CREATE_REPORT);
 
+    const params = new URLSearchParams(document.location.search);
     const [newAccount, setNewAccount] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [createReport, setCreateReport] = useState(false);
+
+    useEffect(() => {
+        if (params.has("newReport")) {
+            setCreateReport(true);
+            history.replace("/user/@me");
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [params]);
 
     useEffect(() => {
         if (isMe && ((user && user._id !== props.user._id) || !user)) setUser(props.user);
@@ -80,7 +89,12 @@ export default function Account(props) {
             setNewAccount(false);
         }} open={newAccount} />
         <ConfirmModal open={confirmDelete} message="Êtes-vous sûr de vouloir supprimer ce compte ?" onClose={setConfirmDelete} onConfirm={() => handleDelete(id, props.addAlert, history, setStaff, setConfirmDelete, setUser)} title="Suppression de Compte" />
-        <CreateReportModal addAlert={props.addAlert} open={createReport} onClose={setCreateReport} />
+        <CreateReportModal addAlert={props.addAlert} open={createReport} onClose={e => {
+            if (e) {
+                setReports(a => a.push(e) && a.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+            }
+            setCreateReport(false)
+        }} />
 
         <Header {...props} />
         <div className="pt-[4.5rem] text-white pb-12 px-6 max-w-7xl mx-auto pb-16">
@@ -169,7 +183,7 @@ export default function Account(props) {
                         addButton={isMe && "Nouveau"}
                         onClick={() => setCreateReport(true)}
                         head={["Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                        rows={reports && reports.map(a => [a._id, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetNotDelivered.length}<Triangle className="w-3 ml-2 stroke-gray-100" /></div>, a.mileage + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.petrol} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
+                        rows={reports && reports.map(a => [a._id, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetsNotDelivered.length}<Triangle className="w-3 ml-2 stroke-gray-100" /></div>, a.mileage + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
                     />
                 }
 
@@ -179,7 +193,7 @@ export default function Account(props) {
                         name="Rapports depuis Hier"
                         description="Tous les rapports remplis depuis hier matin."
                         head={["Livreur", "Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                        rows={dayBeforeReports && dayBeforeReports.map(a => [a._id, <div className="items-center flex">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 ml-2 stroke-gray-100" /></Link></div>, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetNotDelivered.length}<Triangle className="w-3 ml-2 stroke-gray-100" /></div>, a.mileage + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.petrol} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
+                        rows={dayBeforeReports && dayBeforeReports.map(a => [a._id, <div className="items-center flex">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 ml-2 stroke-gray-100" /></Link></div>, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetsNotDelivered.length}<Triangle className="w-3 ml-2 stroke-gray-100" /></div>, a.mileage + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
                     />
                 }
 
@@ -208,18 +222,18 @@ function EditableField({ label, profile, value, canUpdate, setUser, addAlert, is
     const input = useRef();
     const [id] = useState(Math.round(Math.random() * 10000));
 
-    return (<div className="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-3 flex items-center h-14">
+    return (<form className="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-3 flex items-center h-14">
         <dt className="text-sm font-medium text-white">{label}</dt>
         <dd className="mt-1 flex text-sm text-gray-100 sm:col-span-2 sm:mt-0 items-center">
             {edit ? <span className="flex-grow">{
                 type === "password" && props.Element === "input" ? <div className='w-1/2 relative overflow-hidden group'>
-                    <Field forwardRef={input} Element="input" className="!py-1 !border-theme-500 !text-gray-100 !bg-theme-700 peer pr-10" type={showPassword ? "text" : "password"} {...props} />
+                    <Field autoComplete="off" forwardRef={input} Element="input" className="!py-1 !border-theme-500 !text-gray-100 !bg-theme-700 peer pr-10" type={showPassword ? "text" : "password"} {...props} />
                     <input id={"show-" + id} name='show' checked={showPassword} onChange={e => setShowPassword(e.target.checked)} className='hidden' type="checkbox" />
                     <label htmlFor={"show-" + id} className={clsx('transition-transform absolute flex items-center mr-3 right-0 top-0 h-full peer-hover:translate-y-0 peer-focus:translate-y-0 hover:translate-y-0 cursor-pointer', showPassword ? "translate-y-0" : "-translate-y-full")}>
                         <EyeIcon className={clsx('stroke-theme-300 stroke-1 hover:stroke-theme-400', showPassword ? "hidden" : "")} width="22" />
                         <EyeSlashIcon className={clsx('stroke-1 stroke-theme-300 hover:stroke-theme-400', !showPassword ? "hidden" : "")} width="22" />
                     </label>
-                </div> : <Field type={type} forwardRef={input} className="!w-1/2 !py-1 !border-theme-500 !text-gray-100 !bg-theme-700" defaultValue={value} {...props}>{children}</Field>
+                </div> : <Field autoComplete="off" type={type} forwardRef={input} className="!w-1/2 !py-1 !border-theme-500 !text-gray-100 !bg-theme-700" defaultValue={value} {...props}>{children}</Field>
             }</span> : value ? <span className="flex-grow">{value}</span> : null}
             {canUpdate &&
                 <span className="flex-shrink-0 flex gap-5">
@@ -240,7 +254,7 @@ function EditableField({ label, profile, value, canUpdate, setUser, addAlert, is
                 </span>
             }
         </dd>
-    </div>);
+    </form>);
 }
 
 async function handleSave(profile, data, setUser, addAlert, setEdit, message) {

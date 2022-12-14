@@ -14,4 +14,18 @@ router.get("/reports", SessionMiddleware.requiresValidAuthExpress, ProfileMiddle
     }
 });
 
+router.post("/report", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.requiresPermissions(PERMISSIONS.CREATE_REPORT), async (req, res) => {
+    try {
+        if (!req.body) throw new Error("Requête invalide.");
+        const { round, opinion, mileage, fuel, packetsNotDelivered } = req.body;
+        if (typeof round !== "number" || typeof opinion !== "number" || typeof mileage !== "number" || typeof fuel !== "number" || !Array.isArray(packetsNotDelivered)) throw new Error("Requête invalide.");
+
+        const report = await Report.create(req.profile._id, round, opinion, mileage, fuel, packetsNotDelivered);
+        res.status(200).json(report);
+    } catch (error) {
+        console.error(error);
+        res.status(400).send(error.message || "Une erreur est survenue.");
+    }
+});
+
 module.exports = router;
