@@ -36,16 +36,17 @@ class Report {
         return (await new ReportModel({ profile: profileId, round, opinion, mileage, fuel, packetsNotDelivered }).save()).populate(Report.populate);
     }
 
-    static getByProfileId(profileId) {
-        return ReportModel.find({ profile: profileId }, {}, { sort: { date: -1 } }).populate(Report.populate).exists("profile", true); // TODO: check if exists works
+    static async getByProfileId(profileId) {
+        return (await ReportModel.find({ profile: profileId }, {}, { sort: { date: -1 } }).populate(Report.populate)).filter(a => a.profile);
     }
 
-    static get(query) {
-        return ReportModel.find(query, {}, { sort: { date: -1 } }).populate(Report.populate).exists("profile", true);
+    static async get(query) {
+        return (await ReportModel.find(query, {}, { sort: { date: -1 } }).populate(Report.populate)).filter(a => a.profile);
     }
 
-    static getById(id) {
-        return ReportModel.findById(id).populate(Report.populate).exists("profile", true);
+    static async getById(id) {
+        const res = await ReportModel.findById(id).populate(Report.populate);
+        return res.profile ? res : null;
     }
 }
 

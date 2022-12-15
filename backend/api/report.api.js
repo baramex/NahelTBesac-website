@@ -10,7 +10,13 @@ const router = require("express").Router();
 
 router.get("/reports", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.requiresPermissions(PERMISSIONS.VIEW_REPORTS), async (req, res) => {
     try {
-        const reports = await Report.get({});
+        let { startDate } = req.query;
+        const query = {};
+
+        startDate = new Date(startDate);
+        if (startDate) query.date = { $gte: startDate };
+
+        const reports = await Report.get(query);
         res.status(200).json(reports);
     } catch (error) {
         console.error(error);
@@ -49,7 +55,7 @@ router.post("/report", SessionMiddleware.requiresValidAuthExpress, ProfileMiddle
 router.get("/report/:report_id/packetNotDelivered/:packet_id/photo", SessionMiddleware.requiresValidAuthExpress, async (req, res) => {
     try {
         const report = await Report.getById(req.params.report_id);
-        if (!report || (report.profile._id !== req.profile._id && Profile.hasPermission(req.profile, PERMISSIONS.VIEW_REPORTS))) throw new Error("Rapport introuvable.");
+        if (!report || (report.profile._id !== req.profile._id && !Profile.hasPermission(req.profile, PERMISSIONS.VIEW_REPORTS))) throw new Error("Rapport introuvable.");
 
         const packet = report.packetsNotDelivered.find(a => a._id.equals(req.params.packet_id));
         if (!packet || !packet.photo) throw new Error("Paquet introuvable.");

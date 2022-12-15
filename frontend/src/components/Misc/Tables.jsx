@@ -63,7 +63,7 @@ export default function Table({ className, onClick, name, description, clickable
                     </table>
                 </div>
             </div>
-            {maxPerPage &&
+            {maxPerPage && rows?.length > 0 &&
                 <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between border-t border-theme-400 pt-3">
                     <div>
                         <p className="text-sm text-theme-50">
@@ -80,11 +80,11 @@ export default function Table({ className, onClick, name, description, clickable
                                 <span className="sr-only">Précédent</span>
                                 <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
                             </button>
-                            {maxPage && maxPage > 0 && Array(maxPage).fill(0).map((_, i) =>
+                            {(maxPage && maxPage > 0) ? Array(maxPage).fill(0).map((_, i) =>
                                 <button key={i} onClick={() => setPage(i + 1)} aria-current={i === page - 1 ? "page" : undefined} className={clsx("focus:outline-none inline-flex items-center border px-4 py-2 text-sm font-medium relative border-theme-50", i === page - 1 ? "bg-theme-200 text-theme-800" : "text-theme-50 hover:bg-theme-600")}>
                                     {i + 1}
                                 </button>
-                            )}
+                            ) : null}
                             <button
                                 onClick={() => page < maxPage && setPage(e => e + 1)}
                                 className="focus:outline-none transition-colors relative inline-flex items-center rounded-r-md border border-theme-50 px-2 py-2 text-sm font-medium text-theme-50 hover:bg-theme-600"

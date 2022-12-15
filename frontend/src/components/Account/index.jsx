@@ -7,7 +7,6 @@ import { fetchData } from "../../lib/service";
 import { fetchRoles } from "../../lib/service/misc";
 import { deleteUser, fetchUser, fetchUsers, pacthUser } from "../../lib/service/profile";
 import { fetchReports, fetchReportsQuery } from "../../lib/service/report";
-import { formatDate } from "../../lib/utils/date";
 import { thousandsSeparator } from "../../lib/utils/numbers";
 import { hasPermission, PERMISSIONS } from "../../lib/utils/permissions";
 import { fullnamePattern, handleFullnameInput } from "../../lib/utils/regex";
@@ -20,6 +19,7 @@ import Table from "../Misc/Tables";
 import ConfirmModal from "../Modals/Confirm";
 import CreateAccountModal from "../Modals/CreateAccount";
 import CreateReportModal from "../Modals/CreateReport";
+import PacketsNotDeliveredModal from "../Modals/PacketsNotDelivered";
 
 export default function Account(props) {
     const { id } = useParams();
@@ -44,6 +44,7 @@ export default function Account(props) {
     const [newAccount, setNewAccount] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [createReport, setCreateReport] = useState(false);
+    const [packetsNotDelivered, setPacketsNotDelivered] = useState(false);
 
     useEffect(() => {
         if (params.has("newReport")) {
@@ -71,10 +72,10 @@ export default function Account(props) {
 
             if (!dayBeforeReports && canViewReports && isMe) {
                 const dayBefore = new Date();
-                dayBefore.setDate(dayBefore.getDate() - 1);
-                dayBefore.setHours(0, 0, 0, 0);
+                dayBefore.setUTCDate(dayBefore.getUTCDate() - 1);
+                dayBefore.setUTCHours(0, 0, 0, 0);
 
-                fetchData(props.addAlert, setDayBefireReports, fetchReportsQuery, true, { startDate: formatDate(dayBefore) });
+                fetchData(props.addAlert, setDayBefireReports, fetchReportsQuery, true, { startDate: dayBefore.toISOString() });
             }
             if (!staff && canViewProfiles && isMe) fetchData(props.addAlert, setStaff, fetchUsers);
             if (!roles && canEditProfiles && canViewRoles) fetchData(props.addAlert, setRoles, fetchRoles);
@@ -96,6 +97,7 @@ export default function Account(props) {
             }
             setCreateReport(false)
         }} />
+        <PacketsNotDeliveredModal open={!!packetsNotDelivered} onClose={setPacketsNotDelivered} report={packetsNotDelivered} />
 
         <Header {...props} />
         <div className="pt-[4.5rem] text-white pb-12 px-6 max-w-7xl mx-auto pb-16">
@@ -178,14 +180,14 @@ export default function Account(props) {
 
                 {canCreateReport &&
                     <Table
-                        maxPerPage={10}
+                        maxPerPage={5}
                         className="mt-20"
                         name="Rapports du Soir"
                         description="Vous pouvez remplir un rapport par jour."
                         addButton={isMe && "Nouveau"}
                         onClick={() => setCreateReport(true)}
                         head={["Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                        rows={reports && reports.map(a => [a._id, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetsNotDelivered.length}<Triangle className="w-3 ml-2 stroke-gray-100" /></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
+                        rows={reports && reports.map(a => [a._id, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)}><Triangle className="w-3 ml-2 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
                     />
                 }
 
@@ -196,7 +198,7 @@ export default function Account(props) {
                         name="Rapports depuis Hier"
                         description="Tous les rapports remplis depuis hier matin."
                         head={["Livreur", "Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                        rows={dayBeforeReports && dayBeforeReports.map(a => [a._id, <div className="items-center flex">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 ml-2 stroke-gray-100" /></Link></div>, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetsNotDelivered.length}<Triangle className="w-3 ml-2 stroke-gray-100" /></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
+                        rows={dayBeforeReports && dayBeforeReports.map(a => [a._id, <div className="items-center flex">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 ml-2 stroke-gray-100" /></Link></div>, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)} ><Triangle className="w-3 ml-2 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
                     />
                 }
 

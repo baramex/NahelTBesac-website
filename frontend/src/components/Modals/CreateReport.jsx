@@ -15,7 +15,7 @@ export default function CreateReportModal({ open, onClose, addAlert }) {
             </div>
             <div className="mt-3 sm:mt-5">
                 <Dialog.Title as="h3" className="text-lg text-center font-medium leading-6 text-gray-900">
-                    Novueau Rapport du Soir
+                    Nouveau Rapport du Soir
                 </Dialog.Title>
                 <div className="mt-2">
                     <form
