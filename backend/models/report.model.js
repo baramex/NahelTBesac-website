@@ -43,6 +43,10 @@ class Report {
     static get(query) {
         return ReportModel.find(query, {}, { sort: { date: -1 } }).populate(Report.populate).exists("profile", true);
     }
+
+    static getById(id) {
+        return ReportModel.findById(id).populate(Report.populate).exists("profile", true);
+    }
 }
 
 module.exports = { Report }

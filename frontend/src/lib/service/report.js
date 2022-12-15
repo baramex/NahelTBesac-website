@@ -9,5 +9,5 @@ export function fetchReportsQuery(params) {
 }
 
 export function createReport(data) {
-    return api("/report", "POST", data);
+    return api("/report", "POST", data, { "Content-Type": "multipart/form-data" });
 }

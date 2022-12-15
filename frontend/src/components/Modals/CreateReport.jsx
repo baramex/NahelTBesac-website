@@ -1,6 +1,7 @@
 import { Dialog } from "@headlessui/react";
 import { CameraIcon, TruckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@heroicons/react/24/solid";
+import clsx from "clsx";
 import { useState } from "react";
 import Modal from ".";
 import { createReport } from "../../lib/service/report";
@@ -102,10 +103,20 @@ async function handleSubmit(e, addAlert, onClose) {
     const packetsNotDeliveredReasons = Array.from(e.target.querySelectorAll("[id^='reason-']").values()).map(e => ({ id: e.id.replace("reason-", ""), value: e.value }));
     const packetsNotDeliveredPhotos = Array.from(e.target.querySelectorAll("[id^='photo-']").values()).map(e => ({ id: e.id.replace("photo-", ""), value: e.files[0] }));
     const packetsNotDeliveredComments = Array.from(e.target.querySelectorAll("[id^='comment-']").values()).map(e => ({ id: e.id.replace("comment-", ""), value: e.value.trim() }));
-    const packetsNotDelivered = packetsNotDeliveredReasons.map((r, i) => ({ id: r.id, reason: r.value, photo: packetsNotDeliveredPhotos.find(a => a.id === r.id)?.value, comment: packetsNotDeliveredComments.find(a => a.id === r.id)?.value }));
+    const packetsNotDelivered = packetsNotDeliveredReasons.map((r, i) => ({ id: r.id, reason: r.value, comment: packetsNotDeliveredComments.find(a => a.id === r.id)?.value }));
+
+    const form = new FormData();
+    form.append("round", round);
+    form.append("opinion", opinion);
+    form.append("mileage", mileage);
+    form.append("fuel", fuel);
+    form.append("packetsNotDelivered", JSON.stringify(packetsNotDelivered));
+    packetsNotDeliveredPhotos.forEach(photo => {
+        form.append("packetsNotDeliveredPhoto-" + photo.id, photo.value);
+    });
 
     try {
-        const report = await createReport({ round, opinion, mileage, fuel, packetsNotDelivered });
+        const report = await createReport(form);
         addAlert({ type: "success", title: "Le rapport a bien été créé et envoyé.", ephemeral: true });
         onClose(report);
     } catch (error) {
@@ -126,7 +137,9 @@ function PacketsNotDeliveredContainer() {
 }
 
 function PacketNotDelivered({ id, onRemove }) {
-    // TODO: show photo preview input + upload photo + format km (thousand separator) + add pct next to fuel gauge account + add overflow personnal & report
+    const [photo, setPhoto] = useState(null);
+
+    // TODO: upload photo + format km (thousand separator) + add pct next to fuel gauge account + add overflow personnal & report
     return (<div className="grid grid-cols-4 gap-5 border border-theme-200 rounded-md bg-theme-50 p-3 relative">
         <button onClick={() => onRemove(id)} type="button" className="absolute top-2 right-2"><XMarkIcon className="w-5 stroke-2 text-theme-500" /></button>
         <SelectMenuField
@@ -146,12 +159,11 @@ function PacketNotDelivered({ id, onRemove }) {
         </SelectMenuField>
         <div className="flex flex-col relative">
             <Label showRequired={true} variant="theme">Photo</Label>
-            <label className="flex-1 cursor-pointer" htmlFor={`file-${id}`}>
-                <div className="transition-colors h-full border hover:border-theme-300 hover:text-theme-700 border-theme-200 rounded-md bg-gray-50 text-theme-600 flex gap-2 items-center justify-center">
-                    <CameraIcon className="w-5" />Caméra
-                </div>
+            <label className={clsx("transition-colors h-full border hover:border-theme-300 text-sm hover:text-theme-700 border-theme-200 rounded-md bg-gray-50 text-theme-600 flex gap-2 items-center flex-1 cursor-pointer", photo ? "" : "justify-center")} htmlFor={`photo-${id}`}>
+                {!photo ? <><CameraIcon className="w-5" />Caméra</> :
+                    <><img className="h-10" src={photo.image} alt={photo.name} /><p className="text-ellipsis overflow-hidden pr-1 whitespace-nowrap">{photo.name}</p></>}
+                <input onChange={e => setPhoto({ name: e.target.files[0].name, image: URL.createObjectURL(e.target.files[0]) })} id={`photo-${id}`} className='w-0 opacity-0 absolute bottom-0' type="file" accept=".png,.jpeg,.jpg,.tiff" capture="environment" required />
             </label>
-            <input id={`photo-${id}`} className='opacity-0 absolute bottom-0' type="file" accept=".png,.jpeg,.jpg,.tiff" capture="environment" required />
         </div>
         <TextField
             id={`comment-${id}`}

@@ -18,12 +18,9 @@ const multer = require("multer");
 const path = require("path");
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: {
-        fileSize: 500_000
-    },
     fileFilter: async (req, file, callback) => {
-        // TOEDIT
-        if (!AVATAR_MIME_TYPE.includes(file.mimetype) || !AVATAR_TYPE.includes(path.extname(file.originalname))) {
+        const types = ["png", "jpeg", "jpg", "jiff"];
+        if (!types.map(a => "image/" + a).includes(file.mimetype) || !types.map(a => "." + a).includes(path.extname(file.originalname))) {
             callback(new Error("Type de fichier invalide."), false);
         }
         else {
