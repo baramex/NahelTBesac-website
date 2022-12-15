@@ -8,6 +8,7 @@ import { fetchRoles } from "../../lib/service/misc";
 import { deleteUser, fetchUser, fetchUsers, pacthUser } from "../../lib/service/profile";
 import { fetchReports, fetchReportsQuery } from "../../lib/service/report";
 import { formatDate } from "../../lib/utils/date";
+import { thousandsSeparator } from "../../lib/utils/numbers";
 import { hasPermission, PERMISSIONS } from "../../lib/utils/permissions";
 import { fullnamePattern, handleFullnameInput } from "../../lib/utils/regex";
 import { FuelGauge, Triangle } from "../Images/Icons";
@@ -177,29 +178,32 @@ export default function Account(props) {
 
                 {canCreateReport &&
                     <Table
-                        className="mt-10"
+                        maxPerPage={10}
+                        className="mt-20"
                         name="Rapports du Soir"
                         description="Vous pouvez remplir un rapport par jour."
                         addButton={isMe && "Nouveau"}
                         onClick={() => setCreateReport(true)}
                         head={["Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                        rows={reports && reports.map(a => [a._id, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetsNotDelivered.length}<Triangle className="w-3 ml-2 stroke-gray-100" /></div>, a.mileage + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
+                        rows={reports && reports.map(a => [a._id, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetsNotDelivered.length}<Triangle className="w-3 ml-2 stroke-gray-100" /></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
                     />
                 }
 
                 {canViewReports && isMe &&
                     <Table
-                        className="mt-10"
+                        maxPerPage={5}
+                        className="mt-20"
                         name="Rapports depuis Hier"
                         description="Tous les rapports remplis depuis hier matin."
                         head={["Livreur", "Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                        rows={dayBeforeReports && dayBeforeReports.map(a => [a._id, <div className="items-center flex">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 ml-2 stroke-gray-100" /></Link></div>, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetsNotDelivered.length}<Triangle className="w-3 ml-2 stroke-gray-100" /></div>, a.mileage + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
+                        rows={dayBeforeReports && dayBeforeReports.map(a => [a._id, <div className="items-center flex">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 ml-2 stroke-gray-100" /></Link></div>, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetsNotDelivered.length}<Triangle className="w-3 ml-2 stroke-gray-100" /></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
                     />
                 }
 
                 {canViewProfiles && isMe &&
                     <Table
-                        className="mt-10"
+                        maxPerPage={5}
+                        className="mt-20"
                         name="Personnel"
                         addButton="Ajouter"
                         onClick={() => setNewAccount(true)}
