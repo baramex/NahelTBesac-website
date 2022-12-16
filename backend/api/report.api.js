@@ -31,7 +31,7 @@ router.get("/report/:id", SessionMiddleware.requiresValidAuthExpress, async (req
         if (!ObjectId.isValid(req.params.id)) throw new Error("Requête invalide.");
 
         const report = await Report.getById(req.params.id);
-        if (!report || (report.profile._id !== req.profile._id && !Profile.hasPermission(req.profile, PERMISSIONS.VIEW_REPORTS))) throw new Error("Rapport introuvable.");
+        if (!report || (!report.profile._id.equals(req.profile._id) && !Profile.hasPermission(req.profile, PERMISSIONS.VIEW_REPORTS))) throw new Error("Rapport introuvable.");
 
         res.status(200).json(report);
     } catch (error) {
@@ -94,7 +94,7 @@ router.get("/report/:report_id/packetNotDelivered/:packet_id/photo", SessionMidd
         if (!ObjectId.isValid(req.params.report_id) || !ObjectId.isValid(req.params.packet_id)) throw new Error("Requête invalide.");
 
         const report = await Report.getById(req.params.report_id);
-        if (!report || (report.profile._id !== req.profile._id && !Profile.hasPermission(req.profile, PERMISSIONS.VIEW_REPORTS))) throw new Error("Rapport introuvable.");
+        if (!report || (!report.profile._id.equals(req.profile._id) && !Profile.hasPermission(req.profile, PERMISSIONS.VIEW_REPORTS))) throw new Error("Rapport introuvable.");
 
         const packet = report.packetsNotDelivered.find(a => a._id.equals(req.params.packet_id));
         if (!packet || !packet.photo) throw new Error("Paquet introuvable.");
