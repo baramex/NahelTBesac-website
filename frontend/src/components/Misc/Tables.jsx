@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import Loading from "./Loading";
 
-export default function Table({ className, onClick, name, description, clickable, addButton, head, rows, maxPerPage, links }) {
+export default function Table({ className, onClick, name, description, addButton, head, rows, maxPerPage, links, disabled }) {
     const history = useHistory();
 
     const [page, setPage] = useState(1);
@@ -24,14 +24,16 @@ export default function Table({ className, onClick, name, description, clickable
                     </div>
                 }
                 {addButton &&
-                    <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+                    <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none flex gap-2 flex-col items-end">
                         <button
                             type="button"
-                            className="transition-colors flex items-center rounded-md border border-theme-50 px-3 py-1.5 text-sm font-medium text-theme-50 shadow-sm hover:border-theme-200 hover:text-theme-100 focus:outline-none sm:w-auto"
+                            className="transition-colors disabled:cursor-not-allowed disabled:border-theme-300 disabled:text-theme-200 disabled:bg-theme-600 flex items-center rounded-md border border-theme-50 px-3 py-1.5 text-sm font-medium text-theme-50 shadow-sm hover:border-theme-200 hover:text-theme-100 focus:outline-none sm:w-auto"
                             onClick={onClick}
+                            disabled={disabled}
                         >
                             <PlusIcon className="w-5 mr-1" /><span>{addButton}</span>
                         </button>
+                        {disabled && <p className="text-xs text-theme-50">{disabled}</p>}
                     </div>
                 }
             </div>
@@ -51,16 +53,16 @@ export default function Table({ className, onClick, name, description, clickable
                         </thead>
                         <tbody className="divide-y divide-theme-500">
                             {rows?.length > 0 ? (maxPerPage ? rows.slice(maxPerPage * (page - 1), maxPerPage * page) : rows).map((row) => (
-                                <tr key={row[0]} className={clsx(clickable && row.at(-1) ? "cursor-pointer transition-colors hover:bg-theme-200/10" : "")} onClick={clickable && row.at(-1) ? () => history.push(row.at(-1)) : null} role={clickable && row.at(-1) ? "link" : undefined}>
-                                    {row.slice(1, clickable ? row.length - 1 : row.length).map((a, i) =>
+                                <tr key={row[0]}>
+                                    {row.slice(1, row.length).map((a, i) =>
                                         <td key={i} className={clsx(i === 0 ? "py-4 pr-3 pl-2 font-medium text-white" : "px-3 py-4 text-gray-100", "text-sm whitespace-nowrap")}>
                                             {a}
                                         </td>
                                     )}
-                                    {links && links.length > 0 &&
+                                    {links && links.length > 0 ?
                                         <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                            {links.map((link, i) => <Link className="text-white transition-colors hover:text-theme-100" key={i} to={link.href(row[0])}>{link.name}</Link>)}
-                                        </td>
+                                            {links.map((link, i) => !link.href(row[0]) ? null : <Link className="text-white transition-colors hover:text-theme-100" key={i} to={link.href(row[0])}>{link.name}</Link>)}
+                                        </td> : null
                                     }
                                 </tr>
                             )) : <tr><td colSpan={head.length} className="py-4 px-3 text-center text-gray-100 text-sm">{!rows ? <div className="flex justify-center"><Loading /></div> : "Aucune donnée."}</td></tr>}

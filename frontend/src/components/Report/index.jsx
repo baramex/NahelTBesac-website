@@ -31,14 +31,14 @@ export default function Report(props) {
         <Header {...props} />
         <div className="pt-[4.5rem] text-white pb-12 px-6 max-w-7xl mx-auto pb-16">
             {!report ? report === 0 ? <p className="text-center mt-8 font-medium"><ExclamationTriangleIcon className="w-6 inline mr-2" />Rapport non trouvé</p> : <div className="mt-8 flex justify-center"><Loading /></div> : null}
-            <Link to="/user/@me" className="absolute mt-4 transition-colors flex items-center text-theme-50 hover:text-theme-100 hover:underline">
-                <ArrowLeftIcon className="w-5 mr-2" /> Retour à mon compte
-            </Link>
-            {report && report !== 0 && <>
+            {report && report !== 0 ? <>
+                <Link to="/user/@me" className="absolute mt-4 transition-colors flex items-center text-theme-50 hover:text-theme-100 hover:underline">
+                    <ArrowLeftIcon className="w-5 mr-2" /> Retour à mon compte
+                </Link>
                 <h1 className="text-center text-4xl font-medium my-20">Rapport</h1>
                 <Table
                     head={["Livreur", "Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                    rows={[[report._id, <div className="items-center flex">{report.profile.name.firstname} {report.profile.name.lastname}<Link to={`/user/${report.profile._id}`}><Triangle className="w-3 ml-2 stroke-gray-100" /></Link></div>, report.round, <div className="flex items-center">{report.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, report.packetsNotDelivered.length, thousandsSeparator(report.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={report.fuel} showPer={true} />, new Date(report.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })]]}
+                    rows={[[report._id, <div className="items-center flex gap-2">{report.profile.name.firstname} {report.profile.name.lastname}<Link to={`/user/${report.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, report.round, <div className="flex items-center">{report.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, report.packetsNotDelivered.length, thousandsSeparator(report.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={report.fuel} showPer={true} />, new Date(report.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })]]}
                 />
                 <h2 className="text-lg font-medium mt-10">
                     Colis Retours ({report.packetsNotDelivered.length})
@@ -50,7 +50,7 @@ export default function Report(props) {
                             : <p className="text-theme-100">Aucun colis retours.</p>
                     }
                 </div>
-            </>}
+            </> : null}
         </div>
         <Footer />
     </>);

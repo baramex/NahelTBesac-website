@@ -46,6 +46,11 @@ router.post("/report", SessionMiddleware.requiresValidAuthExpress, ProfileMiddle
         packetsNotDelivered = JSON.parse(packetsNotDelivered);
         if (typeof round !== "string" || typeof opinion !== "string" || typeof mileage !== "string" || typeof fuel !== "string" || !Array.isArray(packetsNotDelivered)) throw new Error("Requête invalide.");
 
+        const lastReport = await Report.getLast(req.profile._id);
+        const dayDate = new Date();
+        dayDate.setHours(0, 0, 0, 0);
+        if (lastReport && lastReport.date > dayDate) throw new Error("Vous avez déjà créé un rapport aujourd'hui.");
+
         packetsNotDelivered = packetsNotDelivered.map(a => ({ id: a.id, reason: a.reason, comment: a.comment }));
 
         const files = req.files;

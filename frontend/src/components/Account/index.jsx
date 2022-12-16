@@ -46,6 +46,12 @@ export default function Account(props) {
     const [createReport, setCreateReport] = useState(false);
     const [packetsNotDelivered, setPacketsNotDelivered] = useState(false);
 
+    const dayDate = new Date();
+    dayDate.setHours(dayDate.getHours() - 1);
+    const todayReport = reports?.find(r => new Date(r.date).getTime() > dayDate.getTime());
+    const tomorrowDate = new Date();
+    tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+
     useEffect(() => {
         if (params.has("newReport")) {
             setCreateReport(true);
@@ -72,8 +78,8 @@ export default function Account(props) {
 
             if (!dayBeforeReports && canViewReports && isMe) {
                 const dayBefore = new Date();
-                dayBefore.setUTCDate(dayBefore.getUTCDate() - 1);
-                dayBefore.setUTCHours(0, 0, 0, 0);
+                dayBefore.setDate(dayBefore.getDate() - 1);
+                dayBefore.setHours(0, 0, 0, 0);
 
                 fetchData(props.addAlert, setDayBefireReports, fetchReportsQuery, true, { startDate: dayBefore.toISOString() });
             }
@@ -186,8 +192,9 @@ export default function Account(props) {
                         description="Vous pouvez remplir un rapport par jour."
                         addButton={isMe && "Nouveau"}
                         onClick={() => setCreateReport(true)}
+                        disabled={todayReport && "Disponible le " + tomorrowDate.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })}
                         head={["Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                        rows={reports && reports.map(a => [a._id, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)}><Triangle className="w-3 ml-2 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
+                        rows={reports && reports.map(a => [a._id, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex gap-2">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)}><Triangle className="w-3 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
                     />
                 }
 
@@ -198,7 +205,7 @@ export default function Account(props) {
                         name="Rapports depuis Hier"
                         description="Tous les rapports remplis depuis hier matin."
                         head={["Livreur", "Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                        rows={dayBeforeReports && dayBeforeReports.map(a => [a._id, <div className="items-center flex">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 ml-2 stroke-gray-100" /></Link></div>, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)} ><Triangle className="w-3 ml-2 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })])}
+                        rows={dayBeforeReports && dayBeforeReports.map(a => [a._id, <div className="items-center flex gap-2">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center gap-2 flex">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)} ><Triangle className="w-3 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
                         links={[{ name: "Voir", href: id => "/report/" + id }]}
                     />
                 }
@@ -212,8 +219,8 @@ export default function Account(props) {
                         onClick={() => setNewAccount(true)}
                         head={["Nom/prénom", "Fonction", "Email", "Dernier rapport"]}
                         description="Ajouter, modifier et supprimer des comptes."
-                        clickable={true}
-                        rows={staff && staff.map(a => [a._id, <>{a.name.lastname} {a.name.firstname} {a._id === props.user._id && <span className="text-xs font-normal text-gray-200">(vous)</span>}</>, a.role.name, a.email, hasPermission(a, PERMISSIONS.CREATE_REPORT) ? dayBeforeReports && dayBeforeReports.find(b => b.profile._id === a._id) ? new Date(dayBeforeReports.find(b => b.profile._id === a._id)?.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" }) || "--" : "--" : "--", a._id !== props.user._id && `/user/${a._id}`])}
+                        rows={staff && staff.map(a => [a._id, <>{a.name.lastname} {a.name.firstname} {a._id === props.user._id && <span className="text-xs font-normal text-gray-200">(vous)</span>}</>, a.role.name, a.email, hasPermission(a, PERMISSIONS.CREATE_REPORT) ? dayBeforeReports && dayBeforeReports.find(b => b.profile._id === a._id) ? <div className="items-center gap-2 flex">{new Date(dayBeforeReports.find(b => b.profile._id === a._id)?.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })}<Link to={`/report/${dayBeforeReports.find(b => b.profile._id === a._id)._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div> || "--" : "--" : "--"])}
+                        links={[{ name: "Gérer", href: id => id === props.user._id ? null : "/user/" + id }]}
                     />
                 }
             </>

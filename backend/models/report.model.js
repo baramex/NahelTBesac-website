@@ -40,13 +40,18 @@ class Report {
         return (await ReportModel.find({ profile: profileId }, {}, { sort: { date: -1 } }).populate(Report.populate)).filter(a => a.profile);
     }
 
+    static async getLast(profileId) {
+        const res = await ReportModel.findOne({ profile: profileId }, {}, { sort: { date: -1 } }).populate(Report.populate);
+        return res?.profile ? res : null;
+    }
+
     static async get(query) {
         return (await ReportModel.find(query, {}, { sort: { date: -1 } }).populate(Report.populate)).filter(a => a.profile);
     }
 
     static async getById(id) {
         const res = await ReportModel.findById(id).populate(Report.populate);
-        return res.profile ? res : null;
+        return res?.profile ? res : null;
     }
 }
 
