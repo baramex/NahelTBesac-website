@@ -191,7 +191,7 @@ export default function Account(props) {
                         maxPerPage={5}
                         className="mt-20"
                         name="Rapports du Soir"
-                        description="Vous pouvez remplir un rapport par jour."
+                        description="Vous ne pouvez remplir qu'un rapport par jour."
                         addButton={isMe && "Nouveau"}
                         onClick={() => setCreateReport(true)}
                         disabled={todayReport && "Disponible le " + tomorrowDate.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })}

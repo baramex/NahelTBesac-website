@@ -90,6 +90,8 @@ function MobileNavigation({ user, ...props }) {
     )
 }
 
+// TODO: edit round: lettre + popup pour valider règlement + todolist + mettre uniquement un jour pour les rapports + faire rapport matin avec uniquemnet photo des colis (colis à réceptionner)
+
 export default function Header({ user, setUser, addAlert }) {
     return (<>
         <header className="z-10 py-3 px-5 top-0 fixed w-full bg-[#393d32]">
@@ -107,14 +109,12 @@ export default function Header({ user, setUser, addAlert }) {
                         <NavLink href="/rules">Règlement</NavLink>
                         <NavLink href="/team">L'équipe</NavLink>
                     </div>
-                    <div className="hidden md:block absolute right-0 top-0 h-full flex items-center gap-x-5 md:gap-x-8">
+                    <div className="hidden md:flex absolute right-0 top-0 h-full items-center gap-x-5 md:gap-x-8">
                         {
                             user ?
                                 <UserMenu user={user} setUser={setUser} addAlert={addAlert} />
                                 :
-                                <div>
-                                    <NavLink href="/login">Se connecter</NavLink>
-                                </div>
+                                <NavLink href="/login">Se connecter</NavLink>
                         }
                     </div>
                 </nav>
