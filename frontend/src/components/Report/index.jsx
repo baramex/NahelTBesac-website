@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchData } from "../../lib/service";
 import { fetchReport } from "../../lib/service/report";
-import { Link, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { ArrowLeftIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import Loading from "../Misc/Loading";
 import Header from "../Layout/Header";
@@ -16,6 +16,12 @@ import { REASONS } from "../../lib/utils/reports";
 export default function Report(props) {
     const { id } = useParams();
     const [report, setReport] = useState(null);
+    const history = useHistory();
+
+    useEffect(() => {
+        if (!props.user) history.replace("/login?redirect=" + history.location.pathname);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         if (report && report._id !== id) setReport(null);
@@ -26,6 +32,8 @@ export default function Report(props) {
         if (!report && report !== 0) fetchData(() => setReport(0), setReport, fetchReport, true, id);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [report]);
+
+    if (!props.user) return null;
 
     return (<>
         <Header {...props} />

@@ -85,9 +85,11 @@ export default function Account(props) {
             }
             if (!staff && canViewProfiles && isMe) fetchData(props.addAlert, setStaff, fetchUsers);
             if (!roles && canEditProfiles && canViewRoles) fetchData(props.addAlert, setRoles, fetchRoles);
-        } else history.replace("/login");
+        } else history.replace("/login?redirect=" + history.location.pathname);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, id]);
+
+    if (!props.user) return null;
 
     return (<>
         <CreateAccountModal roles={roles} addAlert={props.addAlert} onClose={e => {
