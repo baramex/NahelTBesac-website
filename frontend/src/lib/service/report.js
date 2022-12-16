@@ -1,5 +1,9 @@
 import { api } from ".";
 
+export function fetchReport(id) {
+    return api(`/report/${id}`, "GET");
+}
+
 export function fetchReports(profile = "@me") {
     return api(`/profile/${profile}/reports`, "GET");
 }

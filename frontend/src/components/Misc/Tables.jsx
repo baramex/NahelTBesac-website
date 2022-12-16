@@ -1,10 +1,10 @@
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Loading from "./Loading";
 
-export default function Table({ className, onClick, name, description, clickable, addButton, head, rows, maxPerPage }) {
+export default function Table({ className, onClick, name, description, clickable, addButton, head, rows, maxPerPage, links }) {
     const history = useHistory();
 
     const [page, setPage] = useState(1);
@@ -57,6 +57,11 @@ export default function Table({ className, onClick, name, description, clickable
                                             {a}
                                         </td>
                                     )}
+                                    {links && links.length > 0 &&
+                                        <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                            {links.map((link, i) => <Link className="text-white transition-colors hover:text-theme-100" key={i} to={link.href(row[0])}>{link.name}</Link>)}
+                                        </td>
+                                    }
                                 </tr>
                             )) : <tr><td colSpan={head.length} className="py-4 px-3 text-center text-gray-100 text-sm">{!rows ? <div className="flex justify-center"><Loading /></div> : "Aucune donnée."}</td></tr>}
                         </tbody>

@@ -6,6 +6,7 @@ const { SessionMiddleware } = require("../models/session.model");
 const { upload } = require("../server");
 const fs = require("fs");
 const path = require("path");
+const { ObjectId } = require("mongodb");
 const router = require("express").Router();
 
 router.get("/reports", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.requiresPermissions(PERMISSIONS.VIEW_REPORTS), async (req, res) => {
@@ -18,6 +19,20 @@ router.get("/reports", SessionMiddleware.requiresValidAuthExpress, ProfileMiddle
 
         const reports = await Report.get(query);
         res.status(200).json(reports);
+    } catch (error) {
+        console.error(error);
+        res.status(400).send(error.message || "Une erreur est survenue.");
+    }
+});
+
+router.get("/report/:id", SessionMiddleware.requiresValidAuthExpress, async (req, res) => {
+    try {
+        if (!ObjectId.isValid(req.params.id)) throw new Error("Requête invalide.");
+
+        const report = await Report.getById(req.params.id);
+        if (!report || (report.profile._id !== req.profile._id && !Profile.hasPermission(req.profile, PERMISSIONS.VIEW_REPORTS))) throw new Error("Rapport introuvable.");
+
+        res.status(200).json(report);
     } catch (error) {
         console.error(error);
         res.status(400).send(error.message || "Une erreur est survenue.");
@@ -54,6 +69,8 @@ router.post("/report", SessionMiddleware.requiresValidAuthExpress, ProfileMiddle
 
 router.get("/report/:report_id/packetNotDelivered/:packet_id/photo", SessionMiddleware.requiresValidAuthExpress, async (req, res) => {
     try {
+        if (!ObjectId.isValid(req.params.report_id) || !ObjectId.isValid(req.params.packet_id)) throw new Error("Requête invalide.");
+
         const report = await Report.getById(req.params.report_id);
         if (!report || (report.profile._id !== req.profile._id && !Profile.hasPermission(req.profile, PERMISSIONS.VIEW_REPORTS))) throw new Error("Rapport introuvable.");
 

@@ -13,6 +13,7 @@ import { canRefresh, isLogged, refreshToken } from './lib/service/authentificati
 import { fetchUser } from './lib/service/profile';
 import "./styles/main.css";
 import "./styles/tailwind.css";
+import Report from './components/Report';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -78,6 +79,8 @@ function App() {
 
                     <Route exact path="/user"><Redirect to={"/user/@me"} /></Route>
                     <Route exact path="/user/:id"><Account {...props} /></Route>
+
+                    <Route exact path="/report/:id"><Report {...props} /></Route>
                 </Router>
             }
         </>
