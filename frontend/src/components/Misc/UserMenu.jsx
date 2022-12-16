@@ -11,10 +11,12 @@ const userNavigation = [
     [{ Icon: UserIcon, name: 'Mon compte', href: '/user/@me' }, { Icon: ArchiveBoxIcon, show: (user) => hasPermission(user, PERMISSIONS.CREATE_REPORT), name: 'Rapport du Soir', href: '/user/@me?newReport' }],
     [{ Icon: ArrowLeftOnRectangleIcon, name: 'Se déconnecter', onClick: handleLogout, color: "text-red-600", iconColor: "text-red-600", colorHover: "text-red-700", iconColorHover: "group-hover:text-red-700" }],
 ];
+const userMobileNavigation = [
+    [{ Icon: UserIcon, name: 'Mon compte', href: '/user/@me' }, { Icon: ArchiveBoxIcon, show: (user) => hasPermission(user, PERMISSIONS.CREATE_REPORT), name: 'Rapport du Soir', href: '/user/@me?newReport' }],
+    [{ Icon: ArrowLeftOnRectangleIcon, name: 'Se déconnecter', onClick: handleLogout, color: "text-red-600", iconColor: "text-red-600", colorHover: "hover:text-red-700", iconColorHover: "group-hover:text-red-700" }],
+];
 
 export default function UserMenu({ user, setUser, addAlert }) {
-    const history = useHistory();
-
     return (<Menu as="div" className="relative">
         <div>
             <Menu.Button className="flex max-w-xs items-center rounded-full text-sm focus:outline-none">
@@ -32,49 +34,78 @@ export default function UserMenu({ user, setUser, addAlert }) {
             leaveTo="transform opacity-0 scale-95"
         >
             <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                <div className="px-4 py-3">
-                    <p className="truncate font-medium text-gray-900 text-sm">{user.name.firstname} {user.name.lastname}</p>
-                    <p className="text-sm text-gray-700">{user.role.name}</p>
-                </div>
-                {(userNavigation).map((items, i) => (
-                    <div className='py-1' key={i}>
-                        {items.map(item => (
-                            (item.show ? item.show(user) : true) ?
-                                <Menu.Item key={item.name}>
-                                    {({ active }) => (
-                                        item.href ?
-                                            <Link
-                                                to={item.href}
-                                                className={clsx(
-                                                    active ? 'bg-gray-100' : item.color || 'text-gray-700',
-                                                    active ? item.colorHover || "text-gray-800" : "",
-                                                    'group flex items-center px-4 py-2 text-sm',
-                                                    item.className
-                                                )}
-                                            >
-                                                {<item.Icon className={clsx("mr-3 h-5 w-5", item.iconColor || "text-gray-600", item.iconColorHover || "group-hover:text-gray-700")} aria-hidden="true" />}
-                                                {item.name}
-                                            </Link> :
-                                            <button
-                                                onClick={e => item.onClick(e, setUser, addAlert, history)}
-                                                className={clsx(
-                                                    active ? 'bg-gray-100' : item.color || 'text-gray-700',
-                                                    active ? item.colorHover || "text-gray-800" : "",
-                                                    'group flex items-center px-4 py-2 text-sm w-full focus:outline-none',
-                                                    item.className
-                                                )}
-                                            >
-                                                {<item.Icon className={clsx("mr-3 h-5 w-5", item.iconColor || "text-gray-600", item.iconColorHover || "group-hover:text-gray-700")} aria-hidden="true" />}
-                                                {item.name}
-                                            </button>
-                                    )}
-                                </Menu.Item> : null
-                        ))}
-                    </div>
-                ))}
+                {UserMenuTab({ user, setUser, addAlert, Element: Menu.Item, navigate: userNavigation })}
             </Menu.Items>
         </Transition>
     </Menu>);
+}
+
+export function UserMenuTab({ user, setUser, addAlert, Element = "div", navigate = userMobileNavigation }) {
+    const history = useHistory();
+
+    return (<>
+        <div className={clsx(Element === "div" ? "px-3 py-2" : "p-3")}>
+            <p className={clsx("truncate font-medium text-theme-900", Element === "div" ? "text-md" : "text-sm")}>{user.name.firstname} {user.name.lastname}</p>
+            <p className={clsx("text-theme-700/75", Element === "div" ? "text-md" : "text-sm")}>{user.role.name}</p>
+        </div>
+        {navigate.map((items, i) => (
+            <div className='py-1' key={i}>
+                {items.map(item => (
+                    (item.show ? item.show(user) : true) ?
+                        <Element key={item.name}>
+                            {Element === "div" ?
+                                item.href ?
+                                    <Link
+                                        to={item.href}
+                                        className={clsx(
+                                            'group flex items-center px-3 py-1 text-md', item.color || 'text-theme-700', item.colorHover || "hover:text-theme-800",
+                                            item.className
+                                        )}
+                                    >
+                                        {item.name}
+                                    </Link> :
+                                    <button
+                                        onClick={e => item.onClick(e, setUser, addAlert, history)}
+                                        className={clsx(
+                                            'group flex items-center px-3 py-1 text-md w-full focus:outline-none', item.color || 'text-theme-700', item.colorHover || "hover:text-theme-800",
+                                            item.className
+                                        )}
+                                    >
+                                        {item.name}
+                                    </button>
+                                : (({ active }) => (
+                                    item.href ?
+                                        <Link
+                                            to={item.href}
+                                            className={clsx(
+                                                active ? 'bg-gray-100' : item.color || 'text-gray-700',
+                                                active ? item.colorHover || "text-gray-800" : "",
+                                                'group flex items-center px-4 py-2 text-sm',
+                                                item.className
+                                            )}
+                                        >
+                                            {<item.Icon className={clsx("mr-3 h-5 w-5", item.iconColor || "text-gray-600", item.iconColorHover || "group-hover:text-gray-700")} aria-hidden="true" />}
+                                            {item.name}
+                                        </Link> :
+                                        <button
+                                            onClick={e => item.onClick(e, setUser, addAlert, history)}
+                                            className={clsx(
+                                                active ? 'bg-gray-100' : item.color || 'text-gray-700',
+                                                active ? item.colorHover || "text-gray-800" : "",
+                                                'group flex items-center px-4 py-2 text-sm w-full focus:outline-none',
+                                                item.className
+                                            )}
+                                        >
+                                            {<item.Icon className={clsx("mr-3 h-5 w-5", item.iconColor || "text-gray-600", item.iconColorHover || "group-hover:text-gray-700")} aria-hidden="true" />}
+                                            {item.name}
+                                        </button>
+                                ))
+                            }
+                        </Element> : null
+                ))}
+            </div>
+        ))}
+    </>);
 }
 
 async function handleLogout(e, setUser, addAlert, history) {

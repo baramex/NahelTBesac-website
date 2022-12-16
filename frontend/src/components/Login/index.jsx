@@ -22,10 +22,10 @@ export default function Login(props) {
 
     return (<>
         <Header {...props} />
-        <div className="pt-[4.5rem] text-white pb-12 px-6">
+        <div className="pt-[4.5rem] text-white pb-20 px-6">
             <UserCircleIcon className="text-gray-100 mx-auto w-16 mt-11 mb-8" />
             <h1 className="text-center text-4xl font-medium mb-14">Espace Employé - Connexion</h1>
-            <div className="px-6 max-w-xl mx-auto">
+            <div className="md:px-6 max-w-xl mx-auto">
                 <form onSubmit={e => handleLogin(e, props.addAlert, props.setUser, history, redirect)} className="flex flex-col gap-6">
                     <TextField
                         id="email"
@@ -41,7 +41,7 @@ export default function Login(props) {
                         autoComplete="password"
                         placeholder="•••••••••"
                         required />
-                    <Button className="mx-auto w-full md:w-1/3 mt-3">
+                    <Button className="mx-auto w-full py-3 md:py-2 md:w-1/3 mt-3">
                         Se connecter
                     </Button>
                 </form>

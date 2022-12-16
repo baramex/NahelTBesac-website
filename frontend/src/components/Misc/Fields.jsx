@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { EyeIcon, EyeSlashIcon, StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { FuelGauge } from "../Images/Icons";
@@ -27,14 +27,18 @@ export function Field({ Element, defaultValue = "", className, showChanged, unit
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [defaultValue]);
 
-    return (<div className="relative">
+    const Parent = unit ? "div" : Fragment;
+    const p = {};
+    if (unit) p.className = "relative";
+
+    return (<Parent {...p}>
         <Element empty={dvalue ? undefined : !value ? "true" : undefined} ref={forwardRef} value={dvalue || value} changed={dvalue ? undefined : defaultValue || showChanged ? value === defaultValue ? undefined : "true" : undefined} onChange={onChange || (e => setValue(e.target.value))} {...props} className={clsx(fieldClassname[variant], className)} />
         {unit && <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
             <span className="text-gray-500 sm:text-sm">
                 {unit}
             </span>
         </div>}
-    </div>);
+    </Parent>);
 }
 
 export function TextField({

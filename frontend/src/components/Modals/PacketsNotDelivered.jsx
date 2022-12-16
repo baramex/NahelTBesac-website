@@ -37,7 +37,7 @@ export default function PacketsNotDeliveredModal({ onClose, open, report: _repor
 }
 
 function PacketNotDelivered({ index, id, packetNotDelivered }) {
-    return (<div className="flex gap-5 border border-theme-200 rounded-md bg-theme-50 p-3 relative">
+    return (<div className="flex md:flex-row flex-col gap-5 border border-theme-200 rounded-md bg-theme-50 p-3 relative">
         <div className="flex flex-col gap-5 w-2/5">
             <div>
                 <Label variant="theme">Numéro (id)</Label>
@@ -54,7 +54,7 @@ function PacketNotDelivered({ index, id, packetNotDelivered }) {
         </div>
         <div className="row-span-2 flex-1">
             <Label showRequired={true} variant="theme">Photo</Label>
-            <img className="max-w-full max-h-80 object-cover" src={`/api/report/${id}/packetNotDelivered/${packetNotDelivered._id}/photo`} alt="paquet non livré" />
+            <img className="max-w-full max-h-64 md:max-h-80 object-cover" src={`/api/report/${id}/packetNotDelivered/${packetNotDelivered._id}/photo`} alt="paquet non livré" />
         </div>
     </div>);
 }

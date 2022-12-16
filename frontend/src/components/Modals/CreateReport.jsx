@@ -65,7 +65,7 @@ export default function CreateReportModal({ open, onClose, addAlert }) {
                         </div>
                         <div className="col-span-full">
                             <p className="text-xs text-theme-900">(<span className="text-red-600">*</span>) Champs obligatoire</p>
-                            <div className="mt-3 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-6">
+                            <div className="mt-3 grid gap-3 md:grid-flow-row-dense md:grid-cols-2 md:gap-6">
                                 <button
                                     type="button"
                                     className="transition-colors focus:outline-none w-full rounded-md border border-red-500 py-1.5 text-red-500 hover:bg-red-50 hover:border-red-600 hover:text-red-600"
@@ -139,8 +139,8 @@ function PacketsNotDeliveredContainer() {
 function PacketNotDelivered({ id, onRemove }) {
     const [photo, setPhoto] = useState(null);
     
-    return (<div className="grid grid-cols-4 gap-5 border border-theme-200 rounded-md bg-theme-50 p-3 relative">
-        <button onClick={() => onRemove(id)} type="button" className="absolute top-2 right-2"><XMarkIcon className="w-5 stroke-2 text-theme-500" /></button>
+    return (<div className="grid grid-cols-2 md:grid-cols-4 gap-5 border border-theme-200 rounded-md bg-theme-50 p-3 relative">
+        <button onClick={() => onRemove(id)} type="button" className="z-10 absolute top-2 right-2"><XMarkIcon className="w-5 stroke-2 text-theme-500" /></button>
         <SelectMenuField
             id={`reason-${id}`}
             showRequired={true}

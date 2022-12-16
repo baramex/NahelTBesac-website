@@ -21,7 +21,7 @@ export function AlertSuccess({ border, ...props }) {
 
 export function Alert({ title, list, className, bgColor, iconStyle, titleColor, textColor, Icon, crossStyle, border, canClose = true, onClose, ephemeral, ...props }) {
     return (
-        <div className={clsx("p-4 animate-slide-in pointer-events-auto", className, bgColor, border ? "rounded-r-md border-l-2" : ephemeral ? "rounded-full sm:mx-auto sm:w-3/12 min-w-[24rem]" : "rounded-md", border)} onAnimationEnd={ephemeral ? a => { if (a.animationName === "slide-in") { a.target.classList.remove("animate-slide-in"); a.target.classList.add("animate-delayed-fade-out"); } if (a.animationName === "fade-out") { onClose(); }; } : null} {...props}>
+        <div className={clsx("p-4 animate-slide-in pointer-events-auto", className, bgColor, border ? "rounded-r-md border-l-2" : ephemeral ? "rounded-full md:mx-auto md:w-3/12 md:min-w-[24rem]" : "rounded-md", border)} onAnimationEnd={ephemeral ? a => { if (a.animationName === "slide-in") { a.target.classList.remove("animate-slide-in"); a.target.classList.add("animate-delayed-fade-out"); } if (a.animationName === "fade-out") { onClose(); }; } : null} {...props}>
             <div className={clsx("flex", list ? "" : "items-center")}>
                 <div className="flex-shrink-0">
                     <Icon className={clsx("h-5 w-5", iconStyle)} aria-hidden="true" />

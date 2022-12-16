@@ -106,10 +106,10 @@ export default function CreateAccountModal({ open, addAlert, roles, onClose }) {
                             </div>
                         </div>
                         {errors && <AlertError className="col-span-full" title={errors[0]} list={errors.slice(1)} canClose={false} onClose={() => setErrors(null)} />}
-                        <div className="col-span-full mt-3 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-6">
+                        <div className="col-span-full mt-3 md:grid md:grid-flow-row-dense md:grid-cols-2 md:gap-6">
                             <button
                                 type="button"
-                                className="transition-colors focus:outline-none w-full rounded-md border border-red-500 py-1.5 text-red-500 hover:bg-red-50 hover:border-red-600 hover:text-red-600"
+                                className="mb-3 md:mb-0 transition-colors focus:outline-none w-full rounded-md border border-red-500 py-1.5 text-red-500 hover:bg-red-50 hover:border-red-600 hover:text-red-600"
                                 onClick={() => onClose(false)}
                             >
                                 Annuler

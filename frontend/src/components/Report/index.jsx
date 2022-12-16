@@ -37,7 +37,7 @@ export default function Report(props) {
 
     return (<>
         <Header {...props} />
-        <div className="pt-[4.5rem] text-white pb-12 px-6 max-w-7xl mx-auto pb-16">
+        <div className="pt-[4.5rem] text-white pb-20 px-6 max-w-7xl mx-auto pb-16">
             {!report ? report === 0 ? <p className="text-center mt-8 font-medium"><ExclamationTriangleIcon className="w-6 inline mr-2" />Rapport non trouvé</p> : <div className="mt-8 flex justify-center"><Loading /></div> : null}
             {report && report !== 0 ? <>
                 <Link to="/user/@me" className="absolute mt-4 transition-colors flex items-center text-theme-50 hover:text-theme-100 hover:underline">
@@ -65,7 +65,7 @@ export default function Report(props) {
 }
 
 function PacketNotDelivered({ index, id, packetNotDelivered }) {
-    return (<div className="flex gap-5 border border-theme-500 rounded-md bg-theme-600 p-3 relative">
+    return (<div className="flex md:flex-row flex-col gap-5 border border-theme-500 rounded-md bg-theme-600 p-3 relative">
         <div className="flex flex-col gap-5 w-2/5">
             <div>
                 <Label>Numéro (id)</Label>
@@ -82,7 +82,7 @@ function PacketNotDelivered({ index, id, packetNotDelivered }) {
         </div>
         <div className="row-span-2 flex-1">
             <Label showRequired={true}>Photo</Label>
-            <img className="max-w-full max-h-80 object-cover" src={`/api/report/${id}/packetNotDelivered/${packetNotDelivered._id}/photo`} alt="paquet non livré" />
+            <img className="max-w-full max-h-64 md:max-h-80 object-cover" src={`/api/report/${id}/packetNotDelivered/${packetNotDelivered._id}/photo`} alt="paquet non livré" />
         </div>
     </div>);
 }

@@ -108,14 +108,14 @@ export default function Account(props) {
         <PacketsNotDeliveredModal open={!!packetsNotDelivered} onClose={setPacketsNotDelivered} report={packetsNotDelivered} />
 
         <Header {...props} />
-        <div className="pt-[4.5rem] text-white pb-12 px-6 max-w-7xl mx-auto pb-16">
+        <div className="pt-[4.5rem] text-white pb-20 px-6 max-w-7xl mx-auto pb-16">
             {(!user || (!isMe && user._id !== id) || (isMe && user._id !== props.user._id)) ? (user === 0 || !canViewProfiles) ? <p className="text-center mt-8 font-medium"><ExclamationTriangleIcon className="w-6 inline mr-2" />{canViewProfiles ? "Utilisateur introuvable" : "Non autorisé"}</p> : <div className="mt-8 flex justify-center"><Loading /></div> : <>
                 {!isMe &&
                     <Link to="/user/@me" className="absolute mt-4 transition-colors flex items-center text-theme-50 hover:text-theme-100 hover:underline">
                         <ArrowLeftIcon className="w-5 mr-2" /> Retour à mon compte
                     </Link>}
                 <h1 className="text-center text-4xl font-medium my-20">{isMe ? "Mon compte" : "Compte de " + user?.name.firstname}</h1>
-                <div className="mt-10 divide-y divide-theme-100">
+                <div className="mt-10 divide-y divide-theme-100/50">
                     <div className="space-y-1">
                         <h3 className="text-xl font-semibold leading-6 text-white">Profil</h3>
                         {isMe && <p className="max-w-2xl text-sm text-gray-200">
@@ -123,7 +123,7 @@ export default function Account(props) {
                         </p>}
                     </div>
                     <div className="mt-6">
-                        <dl className="grid divide-y divide-theme-100">
+                        <dl className="grid divide-y divide-theme-100/50">
                             <EditableField
                                 label="Nom prénom"
                                 value={user ? user.name.lastname + " " + user.name.firstname : <Loading />}
@@ -239,18 +239,18 @@ function EditableField({ label, profile, value, canUpdate, setUser, addAlert, is
     const input = useRef();
     const [id] = useState(Math.round(Math.random() * 10000));
 
-    return (<form className="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-3 flex items-center h-14">
+    return (<form className="py-2 flex flex-col md:flex-row gap-2 md:gap-4 md:items-center md:h-14">
         <dt className="text-sm font-medium text-white">{label}</dt>
-        <dd className="mt-1 flex text-sm text-gray-100 sm:col-span-2 sm:mt-0 items-center">
+        <dd className={clsx("flex text-sm text-gray-100 gap-2 md:col-span-2 my-0 md:flex-row md:items-center", edit ? "flex-col" : "items-center")}>
             {edit ? <span className="flex-grow">{
-                type === "password" && props.Element === "input" ? <div className='w-1/2 relative overflow-hidden group'>
+                type === "password" && props.Element === "input" ? <div className='md:w-1/2 relative overflow-hidden group'>
                     <Field autoComplete="off" forwardRef={input} Element="input" className="!py-1 !border-theme-500 !text-gray-100 !bg-theme-700 peer pr-10" type={showPassword ? "text" : "password"} {...props} />
                     <input id={"show-" + id} name='show' checked={showPassword} onChange={e => setShowPassword(e.target.checked)} className='hidden' type="checkbox" />
                     <label htmlFor={"show-" + id} className={clsx('transition-transform absolute flex items-center mr-3 right-0 top-0 h-full peer-hover:translate-y-0 peer-focus:translate-y-0 hover:translate-y-0 cursor-pointer', showPassword ? "translate-y-0" : "-translate-y-full")}>
                         <EyeIcon className={clsx('stroke-theme-300 stroke-1 hover:stroke-theme-400', showPassword ? "hidden" : "")} width="22" />
                         <EyeSlashIcon className={clsx('stroke-1 stroke-theme-300 hover:stroke-theme-400', !showPassword ? "hidden" : "")} width="22" />
                     </label>
-                </div> : <Field autoComplete="off" type={type} forwardRef={input} className="!w-1/2 !py-1 !border-theme-500 !text-gray-100 !bg-theme-700" defaultValue={value} {...props}>{children}</Field>
+                </div> : <Field autoComplete="off" type={type} forwardRef={input} className="md:!w-1/2 !py-1 !border-theme-500 !text-gray-100 !bg-theme-700" defaultValue={value} {...props}>{children}</Field>
             }</span> : value ? <span className="flex-grow">{value}</span> : null}
             {canUpdate &&
                 <span className="flex-shrink-0 flex gap-5">
