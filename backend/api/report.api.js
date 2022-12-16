@@ -3,10 +3,11 @@ const { ProfileMiddleware, Profile } = require("../models/profile.model");
 const { Report } = require("../models/report.model");
 const { PERMISSIONS } = require("../models/role.model");
 const { SessionMiddleware } = require("../models/session.model");
-const { upload } = require("../server");
+const { upload, mail, header, footer } = require("../server");
 const fs = require("fs");
 const path = require("path");
 const { ObjectId } = require("mongodb");
+const { getTestMessageUrl } = require("nodemailer");
 const router = require("express").Router();
 
 router.get("/reports", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.requiresPermissions(PERMISSIONS.VIEW_REPORTS), async (req, res) => {
@@ -62,10 +63,26 @@ router.post("/report", SessionMiddleware.requiresValidAuthExpress, ProfileMiddle
             fs.writeFileSync(path.join(__dirname, "..", "images", name), file.buffer);
         }
 
-        // TODO: send mail
-
         const report = await Report.create(req.profile._id, round, opinion, mileage, fuel, packetsNotDelivered);
         res.status(200).json(report);
+
+        (async () => {
+            try {
+                const mails = await Profile.getMailList(PERMISSIONS.VIEW_REPORTS);
+                if (mails.length > 0) {
+                    const m = await mail.transporter.sendMail({
+                        from: '"Nahel Transport" <no-reply@naheltbesac.fr',
+                        to: mails.join(", "),
+                        subject: "[Nahel Transport] Nouveau rapport de tournée",
+                        text: `Un nouveau rapport de tournée a été créé par ${req.profile.name.firstname} ${req.profile.name.lastname}.\n\nCliquez ici pour accéder au rapport : https://naheltbesac.fr/report/${report._id}.`,
+                        html: `${header}Un nouveau rapport de tournée a été créé par <strong>${req.profile.name.firstname} ${req.profile.name.lastname}</strong>.<br/><br/><a href="https://naheltbesac.fr/report/${report._id}">Cliquez ici</a> pour accéder au rapport.${footer}`
+                    });
+                    console.log(getTestMessageUrl(m));
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        })();
     } catch (error) {
         console.error(error);
         res.status(400).send(error.message || "Une erreur est survenue.");

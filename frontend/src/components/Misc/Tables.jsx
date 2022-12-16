@@ -1,12 +1,10 @@
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Loading from "./Loading";
 
 export default function Table({ className, onClick, name, description, addButton, head, rows, maxPerPage, links, disabled }) {
-    const history = useHistory();
-
     const [page, setPage] = useState(1);
     const maxPage = Math.ceil(rows?.length / maxPerPage);
 

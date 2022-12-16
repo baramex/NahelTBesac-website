@@ -54,6 +54,11 @@ class Profile {
         return ProfileModel.find().populate(Profile.populate);
     }
 
+    static async getMailList(...permissions) {
+        const profiles = await ProfileModel.find({}, { email: 1, role: 1 }).populate(Profile.populate);
+        return profiles.filter(p => Profile.hasPermission(p, ...permissions)).map(a => a.email);
+    }
+
     static async check(email, password) {
         if (!email || !password) return false;
         const profile = await ProfileModel.findOne({ email }).populate(Profile.populate);

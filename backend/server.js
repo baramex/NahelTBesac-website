@@ -37,7 +37,10 @@ app.listen(PORT, () => {
 });
 
 /* mail */
-/*const { createTransport, createTestAccount } = require("nodemailer");
+const { createTransport, createTestAccount } = require("nodemailer");
+/**
+ * @type {{ transporter: import("nodemailer").Transporter }}
+ */
 let mail = { transporter: null };
 createTestAccount().then(mailAccount => {
     mail.transporter = createTransport({
@@ -49,16 +52,15 @@ createTestAccount().then(mailAccount => {
             pass: mailAccount.pass,
         }
     });
-});*/
-// TOEDIT
+});
 const header = `
-<div style="background-color: #10b981;width: 100%;text-align: center;padding: 20px 0 50px 0;">
-    <h1 style="font-size: 2.5rem;margin:0;"><a href="https://chatblast.io" style="color: white;">ChatBlast</a></h1>
+<div style="background-color: #393d32;width: 100%;padding: 10px 15px;margin-bottom: 25px;">
+    <a href="${process.env.HOST}" style="color: white;text-decoration: none;display: inline-flex;align-items: center;gap: 10px;"><img src="${process.env.HOST}/icon.webp" style="border-radius: 50%;width: 48px;" alt="Nahel Transport"/><h1 style="margin:0;">Nahel Transport</h1></a>
 </div>
 `
 const footer = `
-<div style="background-color: #cdddd5;width: calc(100%-20px);padding: 10px;margin-top: 25px;">
-    <p style="margin:0;">Copyright © 2022 ChatBlast. All Rights Reserved.</p>
+<div style="background-color: #393d32;width: calc(100%-20px);padding: 10px;margin-top: 25px;">
+    <p style="margin:0;color: white;">Copyright © 2022 Nahel Transport. All Rights Reserved.</p>
 </div>
 `;
 
@@ -70,4 +72,4 @@ class CustomError extends Error {
     }
 }
 
-module.exports = { app, upload, header, footer, CustomError };
+module.exports = { app, upload, header, footer, CustomError, mail };
