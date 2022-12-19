@@ -90,7 +90,7 @@ function MobileNavigation({ user, ...props }) {
     )
 }
 
-// TODO: edit round: lettre + popup pour valider règlement + todolist + mettre uniquement un jour pour les rapports + faire rapport matin avec uniquemnet photo des colis (colis à réceptionner)
+// TODO: popup pour valider règlement & todolist + faire rapport matin avec uniquemnet photo des colis (colis à réceptionner) + rapport adresse imprécise
 
 export default function Header({ user, setUser, addAlert }) {
     return (<>

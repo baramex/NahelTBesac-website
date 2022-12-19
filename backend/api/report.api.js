@@ -16,7 +16,7 @@ router.get("/reports", SessionMiddleware.requiresValidAuthExpress, ProfileMiddle
         const query = {};
 
         startDate = new Date(startDate);
-        if (startDate) query.date = { $gte: startDate };
+        if (startDate && !isNaN(startDate)) query.date = { $gte: startDate };
 
         const reports = await Report.get(query);
         res.status(200).json(reports);

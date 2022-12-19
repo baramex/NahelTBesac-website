@@ -59,7 +59,7 @@ export default function Table({ className, onClick, name, description, addButton
                                     )}
                                     {links && links.length > 0 ?
                                         <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                            {links.map((link, i) => !link.href(row[0]) ? null : <Link className="text-white transition-colors hover:text-theme-100" key={i} to={link.href(row[0])}>{link.name}</Link>)}
+                                            {links.map((link, i) => link.href ? !link.href(row[0]) ? null : <Link className="text-white transition-colors hover:text-theme-100" key={i} to={link.href(row[0])}>{link.name}</Link> : <button className="text-white transition-colors hover:text-theme-100" key={i} onClick={() => link.onClick(row[0])}>{link.name}</button>)}
                                         </td> : null
                                     }
                                 </tr>

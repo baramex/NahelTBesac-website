@@ -7,7 +7,9 @@ app.use("/api",
     require("./api/authentification.api"),
     require("./api/misc.api"),
     require("./api/report.api"),
-    require("./api/profile.api"));
+    require("./api/profile.api"),
+    require("./api/morningReport.api"),
+);
 
 app.use((req, res) => {
     res.status(404).send("Route non trouvée.");

@@ -25,12 +25,12 @@ export default function CreateReportModal({ open, onClose, addAlert }) {
                         <TextField
                             label="Tournée"
                             showRequired={true}
-                            placeholder="0"
+                            placeholder="Lettre de tournée"
                             id="round"
                             name="round"
-                            type="number"
                             autoComplete="off"
                             variant="theme"
+                            maxLength={1}
                             required
                         />
                         <StarRatingField
@@ -95,7 +95,7 @@ async function handleSubmit(e, addAlert, onClose) {
     const elements = e.target.querySelectorAll("input, button, select");
     elements.forEach(el => el.disabled = true);
 
-    const round = parseInt(e.target.round.value);
+    const round = e.target.round.value;
     const opinion = parseInt(e.target.star.value);
     const mileage = parseInt(e.target.mileage.value);
     const fuel = parseInt(e.target.fuel.value);
@@ -138,7 +138,7 @@ function PacketsNotDeliveredContainer() {
 
 function PacketNotDelivered({ id, onRemove }) {
     const [photo, setPhoto] = useState(null);
-    
+
     return (<div className="grid grid-cols-2 md:grid-cols-4 gap-5 border border-theme-200 rounded-md bg-theme-50 p-3 relative">
         <button onClick={() => onRemove(id)} type="button" className="z-10 absolute top-2 right-2"><XMarkIcon className="w-5 stroke-2 text-theme-500" /></button>
         <SelectMenuField

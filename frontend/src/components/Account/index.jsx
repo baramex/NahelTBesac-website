@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { fetchData } from "../../lib/service";
 import { fetchRoles } from "../../lib/service/misc";
+import { fetchMorningReports, fetchMorningReportsQuery } from "../../lib/service/morningReports";
 import { deleteUser, fetchUser, fetchUsers, pacthUser } from "../../lib/service/profile";
 import { fetchReports, fetchReportsQuery } from "../../lib/service/report";
 import { thousandsSeparator } from "../../lib/utils/numbers";
@@ -18,6 +19,7 @@ import Loading from "../Misc/Loading";
 import Table from "../Misc/Tables";
 import ConfirmModal from "../Modals/Confirm";
 import CreateAccountModal from "../Modals/CreateAccount";
+import CreateMorningReportModal from "../Modals/CreateMorningReport";
 import CreateReportModal from "../Modals/CreateReport";
 import PacketsNotDeliveredModal from "../Modals/PacketsNotDelivered";
 
@@ -29,7 +31,9 @@ export default function Account(props) {
     const history = useHistory();
 
     const [reports, setReports] = useState(null);
-    const [dayBeforeReports, setDayBefireReports] = useState(null);
+    const [morningReports, setMorningReports] = useState(null);
+    const [todayReports, setTodayReports] = useState(null);
+    const [todayMorningReports, setTodayMorningReports] = useState(null);
     const [staff, setStaff] = useState(null);
     const [roles, setRoles] = useState(null);
 
@@ -45,16 +49,23 @@ export default function Account(props) {
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [createReport, setCreateReport] = useState(false);
     const [packetsNotDelivered, setPacketsNotDelivered] = useState(false);
+    const [morningReport, setMorningReport] = useState(false);
+    const [createMorningReport, setCreateMorningReport] = useState(false);
 
     const dayDate = new Date();
-    dayDate.setHours(dayDate.getHours() - 1);
+    dayDate.setHours(0, 0, 0, 0);
     const todayReport = reports?.find(r => new Date(r.date).getTime() > dayDate.getTime());
+    const todayMorningReport = morningReports?.find(r => new Date(r.date).getTime() > dayDate.getTime());
     const tomorrowDate = new Date();
     tomorrowDate.setDate(tomorrowDate.getDate() + 1);
 
     useEffect(() => {
         if (params.has("newReport")) {
             setCreateReport(true);
+            history.replace("/user/@me");
+        }
+        if (params.has("newMorningReport")) {
+            setCreateMorningReport(true);
             history.replace("/user/@me");
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,14 +86,12 @@ export default function Account(props) {
         if (props.user) {
             if (!user && user !== 0 && canViewProfiles) fetchData(() => setUser(0), setUser, fetchUser, true, id);
             if ((!reports || (reports[0]?.profile?._id !== id && user?._id === id)) && canCreateReport) fetchData(props.addAlert, setReports, fetchReports, true, id);
+            if ((!morningReports || (morningReports[0]?.profile?._id !== id && user?._id === id)) && canCreateReport) fetchData(props.addAlert, setMorningReports, fetchMorningReports, true, id);
 
-            if (!dayBeforeReports && canViewReports && isMe) {
-                const dayBefore = new Date();
-                dayBefore.setDate(dayBefore.getDate() - 1);
-                dayBefore.setHours(0, 0, 0, 0);
-
-                fetchData(props.addAlert, setDayBefireReports, fetchReportsQuery, true, { startDate: dayBefore.toISOString() });
-            }
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (!todayReports && canViewReports && isMe) fetchData(props.addAlert, setTodayReports, fetchReportsQuery, true, { startDate: today.toISOString() });
+            if (!todayMorningReports && canViewReports && isMe) fetchData(props.addAlert, setTodayMorningReports, fetchMorningReportsQuery, true, { startDate: today.toISOString() });
             if (!staff && canViewProfiles && isMe) fetchData(props.addAlert, setStaff, fetchUsers);
             if (!roles && canEditProfiles && canViewRoles) fetchData(props.addAlert, setRoles, fetchRoles);
         } else history.replace("/login?redirect=" + history.location.pathname);
@@ -105,6 +114,16 @@ export default function Account(props) {
             }
             setCreateReport(false)
         }} />
+        <CreateMorningReportModal
+            addAlert={props.addAlert}
+            open={createMorningReport}
+            onClose={e => {
+                if (e) {
+                    setMorningReports(a => a.push(e) && a.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+                }
+                setCreateMorningReport(false);
+            }}
+        />
         <PacketsNotDeliveredModal open={!!packetsNotDelivered} onClose={setPacketsNotDelivered} report={packetsNotDelivered} />
 
         <Header {...props} />
@@ -201,15 +220,42 @@ export default function Account(props) {
                     />
                 }
 
+                {canCreateReport &&
+                    <Table
+                        maxPerPage={5}
+                        className="mt-20"
+                        name="Rapports du Matin"
+                        description="Vous ne pouvez remplir qu'un rapport par jour."
+                        addButton={isMe && "Nouveau"}
+                        onClick={() => setCreateMorningReport(true)}
+                        disabled={todayMorningReport && "Disponible le " + tomorrowDate.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })}
+                        head={["Photo", "Date"]}
+                        rows={morningReports && morningReports.map(a => [a._id, <button onClick={() => setMorningReport(a._id)}>Voir photo <Triangle className="inline ml-1 w-3 stroke-gray-100" /></button>, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
+                        links={[{ name: "Voir", href: id => "/morning-report/" + id }]}
+                    />
+                }
+
                 {canViewReports && isMe &&
                     <Table
                         maxPerPage={5}
                         className="mt-20"
-                        name="Rapports depuis Hier"
-                        description="Tous les rapports remplis depuis hier matin."
+                        name="Rapports du Soir de la journée"
+                        description="Tous les rapports du soir remplis depuis ce matin."
                         head={["Livreur", "Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                        rows={dayBeforeReports && dayBeforeReports.map(a => [a._id, <div className="items-center flex gap-2">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center gap-2 flex">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)} ><Triangle className="w-3 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
+                        rows={todayReports && todayReports.map(a => [a._id, <div className="items-center flex gap-2">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center gap-2 flex">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)} ><Triangle className="w-3 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
                         links={[{ name: "Voir", href: id => "/report/" + id }]}
+                    />
+                }
+
+                {canViewProfiles && isMe &&
+                    <Table
+                        maxPerPage={5}
+                        className="mt-20"
+                        name="Rapports du Matin de la journée"
+                        head={["Livreur", "Photo", "Date"]}
+                        description="Tous les rapports du matin remplis depuis ce matin."
+                        rows={todayMorningReports && todayMorningReports.map(a => [a._id, <div className="items-center flex gap-2">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, <button onClick={() => setMorningReport(a._id)}>Voir photo <Triangle className="inline ml-1 w-3 stroke-gray-100" /></button>, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
+                        links={[{ name: "Voir", href: id => "/morning-report/" + id }]}
                     />
                 }
 
@@ -222,7 +268,7 @@ export default function Account(props) {
                         onClick={() => setNewAccount(true)}
                         head={["Nom/prénom", "Fonction", "Email", "Dernier rapport"]}
                         description="Ajouter, modifier et supprimer des comptes."
-                        rows={staff && staff.map(a => [a._id, <>{a.name.lastname} {a.name.firstname} {a._id === props.user._id && <span className="text-xs font-normal text-gray-200">(vous)</span>}</>, a.role.name, a.email, hasPermission(a, PERMISSIONS.CREATE_REPORT) ? dayBeforeReports && dayBeforeReports.find(b => b.profile._id === a._id) ? <div className="items-center gap-2 flex">{new Date(dayBeforeReports.find(b => b.profile._id === a._id)?.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })}<Link to={`/report/${dayBeforeReports.find(b => b.profile._id === a._id)._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div> || "--" : "--" : "--"])}
+                        rows={staff && staff.map(a => [a._id, <>{a.name.lastname} {a.name.firstname} {a._id === props.user._id && <span className="text-xs font-normal text-gray-200">(vous)</span>}</>, a.role.name, a.email, hasPermission(a, PERMISSIONS.CREATE_REPORT) ? todayReports && todayReports.find(b => b.profile._id === a._id) ? <div className="items-center gap-2 flex">{new Date(todayReports.find(b => b.profile._id === a._id)?.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })}<Link to={`/report/${todayReports.find(b => b.profile._id === a._id)._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div> || "--" : "--" : "--"])}
                         links={[{ name: "Gérer", href: id => id === props.user._id ? null : "/user/" + id }]}
                     />
                 }
@@ -239,7 +285,7 @@ function EditableField({ label, profile, value, canUpdate, setUser, addAlert, is
     const input = useRef();
     const [id] = useState(Math.round(Math.random() * 10000));
 
-    return (<form className="py-2 flex flex-col md:flex-row gap-2 md:gap-4 md:items-center md:h-14">
+    return (<form className="py-2 flex flex-col md:grid md:grid-cols-3 gap-2 md:gap-4 md:items-center md:h-14">
         <dt className="text-sm font-medium text-white">{label}</dt>
         <dd className={clsx("flex text-sm text-gray-100 gap-2 md:col-span-2 my-0 md:flex-row md:items-center", edit ? "flex-col" : "items-center")}>
             {edit ? <span className="flex-grow">{

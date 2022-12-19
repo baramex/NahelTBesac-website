@@ -10,7 +10,7 @@ const NOT_DELIVERED_REASONS = {
 
 const reportSchema = new Schema({
     profile: { type: ObjectId, required: true, ref: "Profile" },
-    round: { type: Number, required: true }, // type ? min ? max ?
+    round: { type: String, validate: /^[a-z]$/i, required: true },
     opinion: { type: Number, required: true, min: 1, max: 5 },
     mileage: { type: Number, required: true, min: 0 },
     fuel: { type: Number, required: true, min: 0, max: 100 },

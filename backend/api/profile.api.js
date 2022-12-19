@@ -4,6 +4,7 @@ const { PERMISSIONS } = require('../models/role.model');
 const { SessionMiddleware } = require('../models/session.model');
 const { rateLimit } = require("express-rate-limit");
 const { Report } = require('../models/report.model');
+const { MorningReport } = require('../models/morningReport.model');
 
 const router = require('express').Router();
 
@@ -84,6 +85,18 @@ router.get("/profile/:id/reports", SessionMiddleware.requiresValidAuthExpress, P
     try {
         const profile = req.paramsProfile;
         const reports = await Report.getByProfileId(profile._id);
+        res.status(200).json(reports);
+    } catch (error) {
+        console.error(error);
+        res.status(400).send(error.message || "Une erreur est survenue.");
+    }
+});
+
+// get morning reports
+router.get("/profile/:id/morning-reports", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.parseParamsProfile(PERMISSIONS.VIEW_PROFILES, PERMISSIONS.VIEW_REPORTS), async (req, res) => {
+    try {
+        const profile = req.paramsProfile;
+        const reports = await MorningReport.getByProfileId(profile._id);
         res.status(200).json(reports);
     } catch (error) {
         console.error(error);
