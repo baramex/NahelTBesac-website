@@ -7,10 +7,10 @@ const fs = require("fs");
 const path = require("path");
 const { ObjectId } = require("mongodb");
 const { getTestMessageUrl } = require("nodemailer");
-const { MorningReport } = require("../models/morningReport.model");
+const { ImpreciseAddressReport } = require("../models/impreciseAddressReport");
 const router = require("express").Router();
 
-router.get("/morning-reports", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.requiresPermissions(PERMISSIONS.VIEW_REPORTS), async (req, res) => {
+router.get("/imprecise-address-reports", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.requiresPermissions(PERMISSIONS.VIEW_REPORTS), async (req, res) => {
     try {
         let { startDate } = req.query;
         const query = {};
@@ -18,7 +18,7 @@ router.get("/morning-reports", SessionMiddleware.requiresValidAuthExpress, Profi
         startDate = new Date(startDate);
         if (startDate && !isNaN(startDate)) query.date = { $gte: startDate };
 
-        const reports = await MorningReport.get(query);
+        const reports = await ImpreciseAddressReport.get(query);
         res.status(200).json(reports);
     } catch (error) {
         console.error(error);
@@ -26,11 +26,11 @@ router.get("/morning-reports", SessionMiddleware.requiresValidAuthExpress, Profi
     }
 });
 
-router.get("/morning-report/:id", SessionMiddleware.requiresValidAuthExpress, async (req, res) => {
+router.get("/imprecise-address-report/:id", SessionMiddleware.requiresValidAuthExpress, async (req, res) => {
     try {
         if (!ObjectId.isValid(req.params.id)) throw new Error("Requête invalide.");
 
-        const report = await MorningReport.getById(req.params.id);
+        const report = await ImpreciseAddressReport.getById(req.params.id);
         if (!report || (!report.profile._id.equals(req.profile._id) && !Profile.hasPermission(req.profile, PERMISSIONS.VIEW_REPORTS))) throw new Error("Rapport introuvable.");
 
         res.status(200).json(report);
@@ -40,32 +40,26 @@ router.get("/morning-report/:id", SessionMiddleware.requiresValidAuthExpress, as
     }
 });
 
-router.post("/morning-report", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.requiresPermissions(PERMISSIONS.CREATE_REPORT), upload.single("photo"), async (req, res) => {
+router.post("/imprecise-address-report", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.requiresPermissions(PERMISSIONS.CREATE_REPORT), async (req, res) => {
     try {
-        if (!req.file) throw new Error("Vous devez envoyer une photo.");
+        if (!req.body) throw new Error("Requête invalide.");
 
-        const lastReport = await MorningReport.getLast(req.profile._id);
-        const dayDate = new Date();
-        dayDate.setHours(0, 0, 0, 0);
-        if (lastReport && lastReport.date > dayDate) throw new Error("Vous avez déjà créé un rapport aujourd'hui.");
+        const { packageNumber, note } = req.body;
+        if (typeof packageNumber !== "string" || typeof note !== "string") throw new Error("Requête invalide.");
 
-        const file = req.file;
-        const name = genSync("extra", 30) + path.extname(file.originalname);
-        fs.writeFileSync(path.join(__dirname, "..", "images", name), file.buffer);
-
-        const report = await MorningReport.create(req.profile._id, name);
+        const report = await ImpreciseAddressReport.create(req.profile._id, packageNumber, note);
         res.status(200).json(report);
 
-        (async () => {
+        (async () => { // TOVERIFY: mail ?
             try {
                 const mails = await Profile.getMailList(PERMISSIONS.VIEW_REPORTS);
                 if (mails.length > 0) {
                     const m = await mail.transporter.sendMail({
                         from: '"Nahel Transport" <no-reply@naheltbesac.fr>',
                         to: mails.join(", "),
-                        subject: "[Nahel Transport] Nouveau rapport du matin",
-                        text: `Un nouveau rapport du matin a été créé par ${req.profile.name.firstname} ${req.profile.name.lastname}.\n\nCliquez ici pour accéder au rapport : https://naheltbesac.fr/morning-report/${report._id}.`,
-                        html: `${header}Un nouveau rapport du matin a été créé par <strong>${req.profile.name.firstname} ${req.profile.name.lastname}</strong>.<br/><br/><a href="https://naheltbesac.fr/morning-report/${report._id}">Cliquez ici</a> pour accéder au rapport.${footer}`
+                        subject: "[Nahel Transport] Nouveau rapport adresse imprécise",
+                        text: `Un nouveau rapport d'adresse imprécise a été créé par ${req.profile.name.firstname} ${req.profile.name.lastname}.\n\nCliquez ici pour accéder au rapport : https://naheltbesac.fr/imprecise-address-report/${report._id}.`,
+                        html: `${header}Un nouveau rapport d'adresse imprécise a été créé par <strong>${req.profile.name.firstname} ${req.profile.name.lastname}</strong>.<br/><br/><a href="https://naheltbesac.fr/imprecise-address-report/${report._id}">Cliquez ici</a> pour accéder au rapport.${footer}`
                     });
                     console.log(getTestMessageUrl(m));
                 }

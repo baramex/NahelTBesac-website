@@ -90,7 +90,7 @@ function MobileNavigation({ user, ...props }) {
     )
 }
 
-// TODO: popup pour valider règlement & todolist + faire rapport matin avec uniquemnet photo des colis (colis à réceptionner) + rapport adresse imprécise
+// TODO: popup pour valider règlement & todolist + show image & add example image morning report + page morning report & imprecise address
 
 export default function Header({ user, setUser, addAlert }) {
     return (<>

@@ -71,7 +71,7 @@ router.post("/report", SessionMiddleware.requiresValidAuthExpress, ProfileMiddle
                 const mails = await Profile.getMailList(PERMISSIONS.VIEW_REPORTS);
                 if (mails.length > 0) {
                     const m = await mail.transporter.sendMail({
-                        from: '"Nahel Transport" <no-reply@naheltbesac.fr',
+                        from: '"Nahel Transport" <no-reply@naheltbesac.fr>',
                         to: mails.join(", "),
                         subject: "[Nahel Transport] Nouveau rapport de tournée",
                         text: `Un nouveau rapport de tournée a été créé par ${req.profile.name.firstname} ${req.profile.name.lastname}.\n\nCliquez ici pour accéder au rapport : https://naheltbesac.fr/report/${report._id}.`,
