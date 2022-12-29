@@ -12,6 +12,6 @@ export function fetchImpreciseAddressReportsQuery(params) {
     return api("/imprecise-address-reports?" + Object.keys(params).map(key => key + '=' + params[key]).join('&'), "GET");
 }
 
-export function createImpreciseAddressReport(packetNumber, note) {
-    return api("/imprecise-address-report", "POST", { packetNumber, note });
+export function createImpreciseAddressReport(packageNumber, note) {
+    return api("/imprecise-address-report", "POST", { packageNumber, note });
 }

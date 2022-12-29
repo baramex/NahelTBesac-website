@@ -17,7 +17,7 @@ class ImpreciseAddressReport {
     };
 
     static async create(profileId, packageNumber, note) {
-        return (await new ImpreciseAddressReportModel({ packageNumber, note }).save()).populate(ImpreciseAddressReport.populate);
+        return (await new ImpreciseAddressReportModel({ profile: profileId, packageNumber, note }).save()).populate(ImpreciseAddressReport.populate);
     }
 
     static async getByProfileId(profileId) {

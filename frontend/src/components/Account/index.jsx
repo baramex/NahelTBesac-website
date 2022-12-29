@@ -23,6 +23,7 @@ import CreateAccountModal from "../Modals/CreateAccount";
 import CreateImpreciseAddressReportModal from "../Modals/CreateImpreciseAddressReport";
 import CreateMorningReportModal from "../Modals/CreateMorningReport";
 import CreateReportModal from "../Modals/CreateReport";
+import MorningReportModal from "../Modals/MorningReport";
 import PacketsNotDeliveredModal from "../Modals/PacketsNotDelivered";
 
 export default function Account(props) {
@@ -69,8 +70,12 @@ export default function Account(props) {
             setCreateReport(true);
             history.replace("/user/@me");
         }
-        if (params.has("newMorningReport")) {
+        else if (params.has("newMorningReport")) {
             setCreateMorningReport(true);
+            history.replace("/user/@me");
+        }
+        else if (params.has("newImpreciseAddressReport")) {
+            setCreateImpreciseAddressReport(true);
             history.replace("/user/@me");
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -142,6 +147,7 @@ export default function Account(props) {
             }}
         />
         <PacketsNotDeliveredModal open={!!packetsNotDelivered} onClose={setPacketsNotDelivered} report={packetsNotDelivered} />
+        <MorningReportModal open={!!morningReport} onClose={setMorningReport} id={morningReport} />
 
         <Header {...props} />
         <div className="pt-[4.5rem] text-white pb-20 px-6 max-w-7xl mx-auto pb-16">

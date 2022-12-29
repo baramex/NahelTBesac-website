@@ -2,7 +2,7 @@ import { Dialog } from "@headlessui/react";
 import { TruckIcon } from "@heroicons/react/24/outline";
 import Modal from ".";
 import { createImpreciseAddressReport } from "../../lib/service/impreciseAddressReport";
-import { createReport } from "../../lib/service/report";
+import { handlePackageNumberInput, packageNumberPattern } from "../../lib/utils/regex";
 import { TextField } from "../Misc/Fields";
 
 export default function CreateImpreciseAddressReportModal({ open, onClose, addAlert }) {
@@ -27,8 +27,10 @@ export default function CreateImpreciseAddressReportModal({ open, onClose, addAl
                             name="packageNumber"
                             autoComplete="off"
                             variant="theme"
-                            maxLength={1}
+                            maxLength={15}
                             className="col-span-2"
+                            pattern={packageNumberPattern}
+                            onInput={handlePackageNumberInput}
                             required
                         />
                         <TextField

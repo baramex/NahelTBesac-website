@@ -9,6 +9,7 @@ app.use("/api",
     require("./api/report.api"),
     require("./api/profile.api"),
     require("./api/morningReport.api"),
+    require("./api/impreciseAddressReport.api"),
 );
 
 app.use((req, res) => {

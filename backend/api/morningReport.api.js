@@ -79,4 +79,18 @@ router.post("/morning-report", SessionMiddleware.requiresValidAuthExpress, Profi
     }
 });
 
+router.get("/morning-report/:id/photo", SessionMiddleware.requiresValidAuthExpress, async (req, res) => {
+    try {
+        if (!ObjectId.isValid(req.params.id)) throw new Error("Requête invalide.");
+
+        const report = await MorningReport.getById(req.params.id);
+        if (!report || (!report.profile._id.equals(req.profile._id) && !Profile.hasPermission(req.profile, PERMISSIONS.VIEW_REPORTS))) throw new Error("Rapport introuvable.");
+
+        res.status(200).sendFile(path.join(__dirname, "..", "images", report.photo));
+    } catch (error) {
+        console.error(error);
+        res.status(400).send(error.message || "Une erreur est survenue.");
+    }
+});
+
 module.exports = router;

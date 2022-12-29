@@ -8,6 +8,7 @@ export const firstnamePattern = "^[A-ZÀ-ÿ][a-zà-ÿ]{1,31}$";
 export const lastnamePattern = "^[A-Zà-ÿ]{2,32}$";
 export const fullnamePattern = "^[A-Zà-ÿ]{2,32} [A-ZÀ-ÿ][a-zà-ÿ]{1,31}$";
 export const passwordPattern = "^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9]))).{6,32}$";
+export const packageNumberPattern = "^A[0-9]{2}( [0,9]{3}){3}$";
 
 export function handleFirstameInput(e) {
     if (!e.target.value) return;
@@ -25,6 +26,19 @@ export function handleFullnameInput(e) {
     const secondpart = e.target.value.split(" ")[1];
     const lastchar = e.target.value.at(-1) === " " && !secondpart ? " " : "";
     e.target.value = (firstpart ? firstpart.toUpperCase().replace(/[^a-zA-ZÀ-ÿ]/g, "") : "") + lastchar + (secondpart ? " " + (secondpart[0].toUpperCase() + secondpart.slice(1).toLowerCase()).replace(/[^a-zA-ZÀ-ÿ]/g, "") : "");
+}
+
+export function handlePackageNumberInput(e) {
+    if (!e.target.value) return;
+    if (e.nativeEvent.data === " ") return e.target.value = e.target.value.slice(0, -1);
+    e.target.value = e.target.value.toUpperCase().replace(/[^A-Z 0-9]/g, "");
+
+    if (e.nativeEvent.inputType === "insertText") {
+        if ((e.target.value.replace(/ /g, "").length - 1) % 3 === 0 && e.target.value.length < 15 && e.target.value.length > 1) e.target.value = e.target.value.slice(0, -1) + " " + e.target.value.at(-1);
+    }
+    else if (e.nativeEvent.inputType === "deleteContentBackward") {
+        if (e.target.value.replace(/ /g, "").length % 3 === 0 && e.target.value.length > 1) e.target.value = e.target.value.slice(0, -1);
+    }
 }
 
 export function isValidPassword(password) {
