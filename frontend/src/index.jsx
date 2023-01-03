@@ -14,6 +14,8 @@ import { fetchUser } from './lib/service/profile';
 import "./styles/main.css";
 import "./styles/tailwind.css";
 import Report from './components/Report';
+import MorningReport from './components/MorningReport';
+import ImpreciseAddressReport from './components/ImpreciseAddressReport';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -81,6 +83,8 @@ function App() {
                     <Route exact path="/user/:id"><Account {...props} /></Route>
 
                     <Route exact path="/report/:id"><Report {...props} /></Route>
+                    <Route exact path="/morning-report/:id"><MorningReport {...props} /></Route>
+                    <Route exact path="/imprecise-address-report/:id"><ImpreciseAddressReport {...props} /></Route>
                 </Router>
             }
         </>

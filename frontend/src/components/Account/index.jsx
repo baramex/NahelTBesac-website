@@ -150,7 +150,7 @@ export default function Account(props) {
         <MorningReportModal open={!!morningReport} onClose={setMorningReport} id={morningReport} />
 
         <Header {...props} />
-        <div className="pt-[4.5rem] text-white pb-20 px-6 max-w-7xl mx-auto pb-16">
+        <div className="pt-[4.5rem] text-white pb-20 px-6 max-w-7xl mx-auto">
             {(!user || (!isMe && user._id !== id) || (isMe && user._id !== props.user._id)) ? (user === 0 || !canViewProfiles) ? <p className="text-center mt-8 font-medium"><ExclamationTriangleIcon className="w-6 inline mr-2" />{canViewProfiles ? "Utilisateur introuvable" : "Non autorisé"}</p> : <div className="mt-8 flex justify-center"><Loading /></div> : <>
                 {!isMe &&
                     <Link to="/user/@me" className="absolute mt-4 transition-colors flex items-center text-theme-50 hover:text-theme-100 hover:underline">
@@ -324,7 +324,7 @@ export default function Account(props) {
             </>
             }
         </div>
-        <Footer {...props} />
+        <Footer />
     </>)
 }
 

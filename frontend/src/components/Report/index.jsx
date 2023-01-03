@@ -37,7 +37,7 @@ export default function Report(props) {
 
     return (<>
         <Header {...props} />
-        <div className="pt-[4.5rem] text-white pb-20 px-6 max-w-7xl mx-auto pb-16">
+        <div className="pt-[4.5rem] text-white pb-20 px-6 max-w-7xl mx-auto">
             {!report ? report === 0 ? <p className="text-center mt-8 font-medium"><ExclamationTriangleIcon className="w-6 inline mr-2" />Rapport non trouvé</p> : <div className="mt-8 flex justify-center"><Loading /></div> : null}
             {report && report !== 0 ? <>
                 <Link to="/user/@me" className="absolute mt-4 transition-colors flex items-center text-theme-50 hover:text-theme-100 hover:underline">
