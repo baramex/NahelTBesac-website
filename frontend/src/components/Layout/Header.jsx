@@ -90,7 +90,7 @@ function MobileNavigation({ user, ...props }) {
     )
 }
 
-// TODO: popup pour valider règlement & todolist + add example image morning report
+// TODO: add example image morning report
 
 export default function Header({ user, setUser, addAlert }) {
     return (<>

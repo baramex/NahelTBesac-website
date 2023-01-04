@@ -34,6 +34,7 @@ router.post("/login", rateLimit({
         if (!profile) throw new Error("Identifants incorrects.");
 
         let session = await Session.getSessionByProfileId(profile._id);
+        let firstlog = !session;
         const ip = getClientIp(req);
         if (session) {
             session.active = true;
@@ -45,7 +46,8 @@ router.post("/login", rateLimit({
 
         const expires = new Date(Session.expiresIn * 1000 + new Date().getTime());
         const expiresRefresh = new Date(Session.expiresInRefresh * 1000 + new Date().getTime());
-        res.cookie("token", session.token, { expires }).cookie("refreshToken", session.refreshToken, { expires: expiresRefresh }).json(Profile.getProfileFields(profile, true));
+        res.cookie("token", session.token, { expires }).cookie("refreshToken", session.refreshToken, { expires: expiresRefresh })
+            .json({ ...Profile.getProfileFields(profile, true), firstlog });
     } catch (error) {
         console.error(error);
         res.status(400).send(error.message || "Une erreur est survenue.");
