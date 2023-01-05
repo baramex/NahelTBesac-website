@@ -1,7 +1,8 @@
 import { Dialog, Transition } from "@headlessui/react";
+import clsx from "clsx";
 import { Fragment } from "react";
 
-export default function Modal({ open, onClose, children }) {
+export default function Modal({ open, className, onClose, children }) {
     return (
         <Transition.Root show={open} as={Fragment} onClose={onClose}>
             <Dialog as="div" className="relative z-10">
@@ -28,7 +29,7 @@ export default function Modal({ open, onClose, children }) {
                             leaveFrom="opacity-100 translate-y-0 md:scale-100"
                             leaveTo="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
                         >
-                            <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-5 pt-5 pb-4 text-left shadow-xl transition-all md:my-8 w-full md:max-w-3xl md:p-6 md:px-8">
+                            <Dialog.Panel className={clsx("relative transform overflow-hidden rounded-lg bg-white px-5 pt-5 pb-4 text-left shadow-xl transition-all md:my-8 w-full md:max-w-3xl md:p-6 md:px-8", className)}>
                                 {children}
                             </Dialog.Panel>
                         </Transition.Child>

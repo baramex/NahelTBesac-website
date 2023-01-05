@@ -3,8 +3,8 @@ const { Schema, model } = require("mongoose");
 
 const impreciseAddressReportSchema = new Schema({
     profile: { type: ObjectId, required: true, ref: "Profile" },
-    packageNumber: { type: String, required: true, validate: /^A[0-9]{2}( [0-9]{3}){3}$/ }, // TOVERIFY: A00 000 000 000 ?
-    note: { type: String, required: true, maxlength: 1028 }, // TOVERIFY: required ?
+    packageNumber: { type: String, required: true, maxlength: 20 },
+    note: { type: String, required: false, maxlength: 1028 },
     date: { type: Date, default: Date.now, required: true }
 });
 

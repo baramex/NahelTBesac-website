@@ -90,8 +90,6 @@ function MobileNavigation({ user, ...props }) {
     )
 }
 
-// TODO: add example image morning report
-
 export default function Header({ user, setUser, addAlert }) {
     return (<>
         <header className="z-10 py-3 px-5 top-0 fixed w-full bg-[#393d32]">

@@ -2,7 +2,6 @@ import { Dialog } from "@headlessui/react";
 import { TruckIcon } from "@heroicons/react/24/outline";
 import Modal from ".";
 import { createImpreciseAddressReport } from "../../lib/service/impreciseAddressReport";
-import { handlePackageNumberInput, packageNumberPattern } from "../../lib/utils/regex";
 import { TextField } from "../Misc/Fields";
 
 export default function CreateImpreciseAddressReportModal({ open, onClose, addAlert }) {
@@ -22,15 +21,14 @@ export default function CreateImpreciseAddressReportModal({ open, onClose, addAl
                     >
                         <TextField
                             label="N° de Colis"
+                            showRequired={true}
                             placeholder="A00 000 000 000"
                             id="packageNumber"
                             name="packageNumber"
                             autoComplete="off"
                             variant="theme"
-                            maxLength={15}
+                            maxLength={20}
                             className="col-span-2"
-                            pattern={packageNumberPattern}
-                            onInput={handlePackageNumberInput}
                             required
                         />
                         <TextField
@@ -41,9 +39,9 @@ export default function CreateImpreciseAddressReportModal({ open, onClose, addAl
                             autoComplete="off"
                             variant="theme"
                             className="col-span-3"
-                            required
                         />
                         <div className="col-span-full">
+                            <p className="text-xs text-theme-900">(<span className="text-red-600">*</span>) Champs obligatoire</p>
                             <div className="mt-3 grid gap-3 md:grid-flow-row-dense md:grid-cols-2 md:gap-6">
                                 <button
                                     type="button"

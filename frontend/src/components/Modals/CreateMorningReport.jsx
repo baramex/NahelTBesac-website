@@ -5,11 +5,12 @@ import { useState } from "react";
 import Modal from ".";
 import { createMorningReport } from "../../lib/service/morningReports";
 import { Label } from "../Misc/Fields";
+import imgExample from "../../images/morningReportExample.png";
 
 export default function CreateMorningReportModal({ open, onClose, addAlert }) {
     const [photo, setPhoto] = useState(null);
 
-    return (<Modal open={open} onClose={onClose}>
+    return (<Modal className="!overflow-visible" open={open} onClose={onClose}>
         <div>
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-theme-50">
                 <TruckIcon className="h-6 w-6 text-theme-600" aria-hidden="true" />
@@ -24,7 +25,10 @@ export default function CreateMorningReportModal({ open, onClose, addAlert }) {
                         className="mt-10 grid grid-cols-1 gap-y-8 gap-x-6"
                     >
                         <div>
-                            <Label variant="theme">Photo des Colis Chargés</Label>
+                            <Label tooltip={<div>
+                                <p className="text-sm mb-2">Exemple:</p>
+                                <img src={imgExample} alt="exemple de colis chargés" />
+                            </div>} variant="theme">Photo des Colis Chargés</Label>
                             <label className={clsx("h-auto py-2 px-3 transition-colors h-full border hover:border-theme-300 text-sm hover:text-theme-700 border-theme-200 rounded-md bg-gray-50 text-theme-600 flex gap-2 items-center flex-1 cursor-pointer", photo ? "" : "justify-center")} htmlFor="photo">
                                 {!photo ? <><CameraIcon className="w-5" />Caméra</> :
                                     <><img className="h-10" src={photo.image} alt={photo.name} /><p className="text-ellipsis overflow-hidden pr-1 whitespace-nowrap">{photo.name}</p></>}

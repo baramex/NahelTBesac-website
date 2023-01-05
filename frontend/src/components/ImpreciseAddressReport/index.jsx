@@ -42,7 +42,7 @@ export default function ImpreciseAddressReport(props) {
                 <h1 className="text-center text-4xl font-medium my-20">Rapport d'Adresse Imprécise</h1>
                 <Table
                     head={["Livreur", "N° de Colis", "Commentaire", "Date"]}
-                    rows={[[report._id, <div className="items-center flex gap-2">{report.profile.name.firstname} {report.profile.name.lastname}<Link to={`/user/${report.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, report.packageNumber, report.note, new Date(report.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })]]}
+                    rows={[[report._id, <div className="items-center flex gap-2">{report.profile.name.firstname} {report.profile.name.lastname}<Link to={`/user/${report.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, report.packageNumber, report.note || "Aucun", new Date(report.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })]]}
                 />
             </> : null}
         </div>

@@ -1,21 +1,23 @@
 import clsx from "clsx";
 import { Fragment, useEffect, useState } from "react";
-import { EyeIcon, EyeSlashIcon, StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
+import { EyeIcon, EyeSlashIcon, QuestionMarkCircleIcon, StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { FuelGauge } from "../Images/Icons";
+import Tooltip from "./Tooltip";
 
 const fieldClassname = {
     white: "block w-full bg-white [[changed_&]]:border-blue-400 focus:[[changed_&]]:border-blue-500 [&:not([empty])]:invalid:border-red-500 [&:not([empty])]:invalid:focus:border-red-600 disabled:cursor-not-allowed disabled:bg-theme-50 disabled:text-theme-500 shadow-sm rounded-md border border-transparent px-3 py-2.5 text-theme-800 placeholder-gray-400 transition-colors focus:border-theme-300 focus:outline-none focus:ring-0 sm:text-sm",
     theme: "block w-full bg-theme-50 [[changed_&]]:border-blue-400 focus:[[changed_&]]:border-blue-500 [&:not([empty])]:invalid:border-red-500 [&:not([empty])]:invalid:focus:border-red-600 disabled:cursor-not-allowed disabled:bg-theme-50 disabled:text-theme-500 shadow-sm rounded-md border border-theme-200 px-3 py-2.5 text-theme-800 placeholder-gray-400 transition-colors focus:border-theme-300 focus:outline-none focus:ring-0 sm:text-sm",
 };
 
-export function Label({ optinal, children, showRequired, variant = "white", className, id }) {
+export function Label({ optinal, children, showRequired, variant = "white", tooltip, className, id }) {
     return (<label
         htmlFor={id}
         className={clsx("mb-2 block text-sm font-medium", variant === "white" ? "text-white" : "text-theme-800", className, showRequired && "after:content-['_*'] after:text-red-600")}
     >
         {children}
         {optinal && <span className='text-xs text-gray-500 ml-2'>({optinal})</span>}
+        {tooltip && <Tooltip className="inline ml-2 cursor-help" content={tooltip}><QuestionMarkCircleIcon className='w-[1.4rem] text-gray-400 inline' /></Tooltip>}
     </label>);
 }
 

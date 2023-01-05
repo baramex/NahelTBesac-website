@@ -2,9 +2,7 @@ const { genSync } = require("random-web-token");
 const { ProfileMiddleware, Profile } = require("../models/profile.model");
 const { PERMISSIONS } = require("../models/role.model");
 const { SessionMiddleware } = require("../models/session.model");
-const { upload, mail, header, footer } = require("../server");
-const fs = require("fs");
-const path = require("path");
+const { mail, header, footer } = require("../server");
 const { ObjectId } = require("mongodb");
 const { getTestMessageUrl } = require("nodemailer");
 const { ImpreciseAddressReport } = require("../models/impreciseAddressReport");
@@ -45,12 +43,12 @@ router.post("/imprecise-address-report", SessionMiddleware.requiresValidAuthExpr
         if (!req.body) throw new Error("Requête invalide.");
 
         const { packageNumber, note } = req.body;
-        if (typeof packageNumber !== "string" || typeof note !== "string") throw new Error("Requête invalide.");
+        if (typeof packageNumber !== "string" || (note && typeof note !== "string")) throw new Error("Requête invalide.");
 
         const report = await ImpreciseAddressReport.create(req.profile._id, packageNumber, note);
         res.status(200).json(report);
 
-        (async () => { // TOVERIFY: mail ?
+        (async () => {
             try {
                 const mails = await Profile.getMailList(PERMISSIONS.VIEW_REPORTS);
                 if (mails.length > 0) {

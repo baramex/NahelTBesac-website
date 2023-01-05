@@ -267,7 +267,7 @@ export default function Account(props) {
                         addButton={isMe && "Nouveau"}
                         onClick={() => setCreateImpreciseAddressReport(true)}
                         head={["N° de Colis", "Commentaire", "Date"]}
-                        rows={impreciseAddressReports && impreciseAddressReports.map(a => [a._id, a.packageNumber, a.note, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
+                        rows={impreciseAddressReports && impreciseAddressReports.map(a => [a._id, a.packageNumber, a.note || "Aucun", new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
                         links={[{ name: "Voir", href: id => "/imprecise-address-report/" + id }]}
                     />
                 }
@@ -303,7 +303,7 @@ export default function Account(props) {
                         name="Rapports d'Adresse Imprécise de la Journée"
                         head={["Livreur", "N° de Colis", "Commentaire", "Date"]}
                         description="Tous les rapports d'adresse imprécise remplis depuis ce matin."
-                        rows={todayImpreciseAddressReports && todayImpreciseAddressReports.map(a => [a._id, <div className="items-center flex gap-2">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, a.packageNumber, a.note, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
+                        rows={todayImpreciseAddressReports && todayImpreciseAddressReports.map(a => [a._id, <div className="items-center flex gap-2">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, a.packageNumber, a.note || "Aucun", new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
                         links={[{ name: "Voir", href: id => "/imprecise-address-report/" + id }]}
                     />
                 }
