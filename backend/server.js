@@ -51,7 +51,7 @@ const header = `
 <div style="background-color: #393d32;width: 100%;padding: 10px 15px;margin-bottom: 25px;">
     <a href="${process.env.HOST}" style="color: white;text-decoration: none;display: inline-flex;align-items: center;gap: 10px;"><img src="${process.env.HOST}/icon.webp" style="border-radius: 50%;width: 48px;" alt="Nahel Transport"/><h1 style="margin:0;">Nahel Transport</h1></a>
 </div>
-`
+`;
 const footer = `
 <div style="background-color: #393d32;width: calc(100%-20px);padding: 10px;margin-top: 25px;">
     <p style="margin:0;color: white;">Copyright © 2022 Nahel Transport. All Rights Reserved.</p>
