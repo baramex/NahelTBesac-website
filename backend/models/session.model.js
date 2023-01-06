@@ -103,7 +103,7 @@ class Session {
     }
 
     static update() {
-        SessionModel.updateMany({ active: true, date: { $gt: new Date().getTime() - Session.expiresIn * 1000 } }, { $set: { active: false }, $unset: { token: true } }, { runValidators: true });
+        SessionModel.updateMany({ active: true, date: { $lt: new Date().getTime() - Session.expiresIn * 1000 } }, { $set: { active: false }, $unset: { token: true } }, { runValidators: true });
     }
 }
 
@@ -115,8 +115,8 @@ class SessionMiddleware {
         if (!token) throw new Error();
 
         const session = await Session.getSessionByToken(token);
-        if (Session.checkExpired(session.date)) throw new Error();
         if (!session || !session.profile || typeof session.profile !== "object") throw new Error();
+        if (Session.checkExpired(session.date)) throw new Error();
 
         return { profile: session.profile, session };
     }

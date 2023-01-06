@@ -2,11 +2,10 @@ const { genSync } = require("random-web-token");
 const { ProfileMiddleware, Profile } = require("../models/profile.model");
 const { PERMISSIONS } = require("../models/role.model");
 const { SessionMiddleware } = require("../models/session.model");
-const { upload, mail, header, footer } = require("../server");
+const { upload, transporter, header, footer } = require("../server");
 const fs = require("fs");
 const path = require("path");
 const { ObjectId } = require("mongodb");
-const { getTestMessageUrl } = require("nodemailer");
 const { MorningReport } = require("../models/morningReport.model");
 const router = require("express").Router();
 
@@ -60,14 +59,13 @@ router.post("/morning-report", SessionMiddleware.requiresValidAuthExpress, Profi
             try {
                 const mails = await Profile.getMailList(PERMISSIONS.VIEW_REPORTS);
                 if (mails.length > 0) {
-                    const m = await mail.transporter.sendMail({
+                    await transporter.sendMail({
                         from: '"Nahel Transport" <no-reply@naheltbesac.fr>',
                         to: mails.join(", "),
                         subject: "[Nahel Transport] Nouveau rapport du matin",
                         text: `Un nouveau rapport du matin a été créé par ${req.profile.name.firstname} ${req.profile.name.lastname}.\n\nCliquez ici pour accéder au rapport : https://naheltbesac.fr/morning-report/${report._id}.`,
                         html: `${header}Un nouveau rapport du matin a été créé par <strong>${req.profile.name.firstname} ${req.profile.name.lastname}</strong>.<br/><br/><a href="https://naheltbesac.fr/morning-report/${report._id}">Cliquez ici</a> pour accéder au rapport.${footer}`
                     });
-                    console.log(getTestMessageUrl(m));
                 }
             } catch (error) {
                 console.error(error);

@@ -37,6 +37,7 @@ router.post("/login", rateLimit({
         let firstlog = !session;
         const ip = getClientIp(req);
         if (session) {
+            if (session.active) await Session.disable(session);
             session.active = true;
             if (!session.ips.includes(ip)) session.ips.push(ip);
             await session.save({ validateBeforeSave: true });
@@ -44,8 +45,9 @@ router.post("/login", rateLimit({
             session = await Session.create(profile._id, ip);
         }
 
-        const expires = new Date(Session.expiresIn * 1000 + new Date().getTime());
-        const expiresRefresh = new Date(Session.expiresInRefresh * 1000 + new Date().getTime());
+        const expires = new Date(Session.expiresIn * 1000 + new Date(session.date).getTime());
+        const expiresRefresh = new Date(Session.expiresInRefresh * 1000 + new Date(session.date).getTime());
+
         res.cookie("token", session.token, { expires }).cookie("refreshToken", session.refreshToken, { expires: expiresRefresh })
             .json({ ...Profile.getProfileFields(profile, true), firstlog });
     } catch (error) {
@@ -68,6 +70,8 @@ router.post("/refresh", async (req, res) => {
             throw new Error("Jeton de rafraîchissement invalide.");
         }
 
+        console.log(session.token, session.refreshToken, session.date);
+
         const ip = getClientIp(req);
         if (session.active) await Session.disable(session);
 
@@ -75,8 +79,10 @@ router.post("/refresh", async (req, res) => {
         if (!session.ips.includes(ip)) session.ips.push(ip);
         await session.save({ validateBeforeSave: true });
 
-        const expires = new Date(Session.expiresIn * 1000 + new Date().getTime());
-        const expiresRefresh = new Date(Session.expiresInRefresh * 1000 + new Date().getTime());
+        console.log(session.token, session.refreshToken, session.date);
+
+        const expires = new Date(Session.expiresIn * 1000 + new Date(session.date).getTime());
+        const expiresRefresh = new Date(Session.expiresInRefresh * 1000 + new Date(session.date).getTime());
         res.cookie("token", session.token, { expires }).cookie("refreshToken", session.refreshToken, { expires: expiresRefresh }).json(Profile.getProfileFields(profile, true));
     } catch (error) {
         console.error(error);

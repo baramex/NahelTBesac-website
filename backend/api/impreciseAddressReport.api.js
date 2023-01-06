@@ -1,10 +1,8 @@
-const { genSync } = require("random-web-token");
 const { ProfileMiddleware, Profile } = require("../models/profile.model");
 const { PERMISSIONS } = require("../models/role.model");
 const { SessionMiddleware } = require("../models/session.model");
-const { mail, header, footer } = require("../server");
+const { header, footer, transporter } = require("../server");
 const { ObjectId } = require("mongodb");
-const { getTestMessageUrl } = require("nodemailer");
 const { ImpreciseAddressReport } = require("../models/impreciseAddressReport");
 const router = require("express").Router();
 
@@ -52,14 +50,13 @@ router.post("/imprecise-address-report", SessionMiddleware.requiresValidAuthExpr
             try {
                 const mails = await Profile.getMailList(PERMISSIONS.VIEW_REPORTS);
                 if (mails.length > 0) {
-                    const m = await mail.transporter.sendMail({
+                    await transporter.sendMail({
                         from: '"Nahel Transport" <no-reply@naheltbesac.fr>',
                         to: mails.join(", "),
                         subject: "[Nahel Transport] Nouveau rapport adresse imprécise",
                         text: `Un nouveau rapport d'adresse imprécise a été créé par ${req.profile.name.firstname} ${req.profile.name.lastname}.\n\nCliquez ici pour accéder au rapport : https://naheltbesac.fr/imprecise-address-report/${report._id}.`,
                         html: `${header}Un nouveau rapport d'adresse imprécise a été créé par <strong>${req.profile.name.firstname} ${req.profile.name.lastname}</strong>.<br/><br/><a href="https://naheltbesac.fr/imprecise-address-report/${report._id}">Cliquez ici</a> pour accéder au rapport.${footer}`
                     });
-                    console.log(getTestMessageUrl(m));
                 }
             } catch (error) {
                 console.error(error);

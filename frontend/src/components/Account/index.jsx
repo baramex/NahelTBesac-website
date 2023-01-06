@@ -160,7 +160,7 @@ export default function Account(props) {
                 <div className="mt-10 divide-y divide-theme-100/50">
                     <div className="space-y-1">
                         <h3 className="text-xl font-semibold leading-6 text-white">Profil</h3>
-                        {isMe && <p className="max-w-2xl text-sm text-gray-200">
+                        {isMe && !canEditProfiles && <p className="max-w-2xl text-sm text-gray-200">
                             En cas de problème, merci de contacter votre responsable.
                         </p>}
                     </div>

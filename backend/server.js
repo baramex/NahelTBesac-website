@@ -37,21 +37,15 @@ app.listen(PORT, () => {
 });
 
 /* mail */
-const { createTransport, createTestAccount } = require("nodemailer");
-/**
- * @type {{ transporter: import("nodemailer").Transporter }}
- */
-let mail = { transporter: null };
-createTestAccount().then(mailAccount => {
-    mail.transporter = createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false,
-        auth: {
-            user: mailAccount.user,
-            pass: mailAccount.pass,
-        }
-    });
+const { createTransport } = require("nodemailer");
+const transporter = createTransport({
+    host: "pro2.mail.ovh.net",
+    port: 587,
+    secure: false,
+    auth: {
+        user: "no-reply@naheltbesac.fr",
+        pass: "fFJ45fdF45dw98v",
+    }
 });
 const header = `
 <div style="background-color: #393d32;width: 100%;padding: 10px 15px;margin-bottom: 25px;">
@@ -72,4 +66,4 @@ class CustomError extends Error {
     }
 }
 
-module.exports = { app, upload, header, footer, CustomError, mail };
+module.exports = { app, upload, header, footer, CustomError, transporter };
