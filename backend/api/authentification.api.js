@@ -70,16 +70,12 @@ router.post("/refresh", async (req, res) => {
             throw new Error("Jeton de rafraîchissement invalide.");
         }
 
-        console.log(session.token, session.refreshToken, session.date);
-
         const ip = getClientIp(req);
         if (session.active) await Session.disable(session);
 
         session.active = true;
         if (!session.ips.includes(ip)) session.ips.push(ip);
         await session.save({ validateBeforeSave: true });
-
-        console.log(session.token, session.refreshToken, session.date);
 
         const expires = new Date(Session.expiresIn * 1000 + new Date(session.date).getTime());
         const expiresRefresh = new Date(Session.expiresInRefresh * 1000 + new Date(session.date).getTime());
