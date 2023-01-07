@@ -11,7 +11,7 @@ app.use(cors({
     origin: process.env.HOST,
     credentials: true
 }));
-app.use(express.static("public"));
+app.use(express.static(__dirname + "/public"));
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 const multer = require("multer");
