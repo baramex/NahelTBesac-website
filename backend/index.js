@@ -12,6 +12,10 @@ app.use("/api",
     require("./api/impreciseAddressReport.api"),
 );
 
-app.use((req, res) => {
+app.get("*", (req, res) => {
+    res.sendFile(__dirname + "/public/index.html");
+});
+
+app.use("*", (req, res) => {
     res.status(404).send("Route non trouvée.");
 });
