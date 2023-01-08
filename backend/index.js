@@ -1,7 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const { app } = require("./server");
-mongoose.connect(process.env.DB, { dbName: process.env.DB_NAME });
+mongoose.connect(process.env.DB, { dbName: process.env.DB_NAME }).catch(console.error);
 
 app.use("/api",
     require("./api/authentification.api"),
