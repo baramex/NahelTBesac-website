@@ -69,7 +69,7 @@ export default function Table({ className, onClick, name, description, addButton
                 </div>
             </div>
             {maxPerPage && rows?.length > 0 &&
-                <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between border-t border-theme-400 pt-3">
+                <div className="flex flex-1 items-center justify-between border-t border-theme-400 pt-3">
                     <div>
                         <p className="text-sm text-theme-50">
                             Résultats <span className="font-medium">{maxPerPage * (page - 1) + 1}</span> à <span className="font-medium">{Math.min(maxPerPage * page, rows?.length || 0)}</span> sur{' '}

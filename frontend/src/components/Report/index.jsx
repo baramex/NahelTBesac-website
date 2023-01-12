@@ -45,8 +45,8 @@ export default function Report(props) {
                 </Link>
                 <h1 className="text-center text-4xl font-medium my-20">Rapport</h1>
                 <Table
-                    head={["Livreur", "Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                    rows={[[report._id, <div className="items-center flex gap-2">{report.profile.name.firstname} {report.profile.name.lastname}<Link to={`/user/${report.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, report.round, <div className="flex items-center">{report.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, report.packetsNotDelivered.length, thousandsSeparator(report.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={report.fuel} showPer={true} />, new Date(report.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })]]}
+                    head={["Livreur", "Tournée", "Immatriculation", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
+                    rows={[[report._id, <div className="items-center flex gap-2">{report.profile.name.firstname} {report.profile.name.lastname}<Link to={`/user/${report.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, report.round, report.licensePlate, <div className="flex items-center">{report.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, report.packetsNotDelivered.length, thousandsSeparator(report.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={report.fuel} showPer={true} />, new Date(report.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })]]}
                 />
                 <h2 className="text-lg font-medium mt-10">
                     Colis Retours ({report.packetsNotDelivered.length})

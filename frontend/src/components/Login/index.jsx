@@ -21,7 +21,6 @@ export default function Login(props) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-
     if (props.user && !firstLog) return null;
 
     return (<>
@@ -45,7 +44,7 @@ export default function Login(props) {
                         id="password"
                         label="Mot de Passe"
                         type="password"
-                        autoComplete="password"
+                        autoComplete="current-password"
                         placeholder="•••••••••"
                         required />
                     <Button className="mx-auto w-full py-3 md:py-2 md:w-1/3 mt-3">

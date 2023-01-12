@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { useState } from "react";
 import Modal from ".";
 import { createReport } from "../../lib/service/report";
+import { handleLicensePlateInput, licensePlatePattern } from "../../lib/utils/regex";
 import { FuelGaugeField, Label, SelectMenuField, StarRatingField, TextField } from "../Misc/Fields";
 
 export default function CreateReportModal({ open, onClose, addAlert }) {
@@ -20,6 +21,7 @@ export default function CreateReportModal({ open, onClose, addAlert }) {
                 <div className="mt-2">
                     <form
                         onSubmit={e => handleSubmit(e, addAlert, onClose)}
+                        autoComplete="on"
                         className="mt-10 grid grid-cols-1 gap-y-8 gap-x-6 sm:grid-cols-2"
                     >
                         <TextField
@@ -28,9 +30,22 @@ export default function CreateReportModal({ open, onClose, addAlert }) {
                             placeholder="Lettre de tournée"
                             id="round"
                             name="round"
-                            autoComplete="off"
+                            autoComplete="round"
                             variant="theme"
                             maxLength={1}
+                            required
+                        />
+                        <TextField
+                            label="Immatriculation"
+                            showRequired={true}
+                            placeholder="AA-001-AA"
+                            id="licensePlate"
+                            name="licensePlate"
+                            autoComplete="licensePlate"
+                            variant="theme"
+                            maxLength={9}
+                            pattern={licensePlatePattern}
+                            onInput={handleLicensePlateInput}
                             required
                         />
                         <StarRatingField
@@ -96,6 +111,7 @@ async function handleSubmit(e, addAlert, onClose) {
     elements.forEach(el => el.disabled = true);
 
     const round = e.target.round.value;
+    const licensePlate = e.target.licensePlate.value;
     const opinion = parseInt(e.target.star.value);
     const mileage = parseInt(e.target.mileage.value);
     const fuel = parseInt(e.target.fuel.value);
@@ -107,6 +123,7 @@ async function handleSubmit(e, addAlert, onClose) {
 
     const form = new FormData();
     form.append("round", round);
+    form.append("licensePlate", licensePlate);
     form.append("opinion", opinion);
     form.append("mileage", mileage);
     form.append("fuel", fuel);

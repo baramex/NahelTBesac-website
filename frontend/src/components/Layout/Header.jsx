@@ -80,9 +80,10 @@ function MobileNavigation({ user, ...props }) {
                         <MobileNavLink href="/to-do-list">To Do List</MobileNavLink>
                         <MobileNavLink href="/rules">Règlement</MobileNavLink>
                         <MobileNavLink href="/team">L'équipe</MobileNavLink>
-                        <hr className="m-2 border-theme-200/70" />
+                        <hr className="m-2 border-gray-400/50" />
                         {!user && <MobileNavLink href="/login">Se connecter</MobileNavLink>}
                         {user && <UserMenuTab user={user} {...props} />}
+                        <p className="text-gray-400 font-light text-xs text-center mt-2"><a className="mr-5" href="/mentions légales.pdf" download>Mentions Légales</a><a href="/rgpd.pdf" download>RGPD</a></p>
                     </Popover.Panel>
                 </Transition.Child>
             </Transition.Root>

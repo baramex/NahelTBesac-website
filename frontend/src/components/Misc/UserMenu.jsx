@@ -1,5 +1,5 @@
 import { Menu, Transition } from "@headlessui/react";
-import { ArchiveBoxArrowDownIcon, ArchiveBoxIcon, ArrowLeftOnRectangleIcon, BuildingOffice2Icon, UserIcon } from "@heroicons/react/24/outline";
+import { ArchiveBoxArrowDownIcon, ArchiveBoxIcon, ArrowLeftOnRectangleIcon, BuildingOffice2Icon, UserGroupIcon, UserIcon } from "@heroicons/react/24/outline";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import clsx from "clsx";
 import { Fragment } from "react";
@@ -8,11 +8,17 @@ import { logout } from "../../lib/service/authentification";
 import { hasPermission, PERMISSIONS } from "../../lib/utils/permissions";
 
 const userNavigation = [
-    [{ Icon: UserIcon, name: 'Mon compte', href: '/user/@me' }, { Icon: ArchiveBoxArrowDownIcon, show: (user) => hasPermission(user, PERMISSIONS.CREATE_REPORT), name: 'Rapport du Matin', href: '/user/@me?newMorningReport' }, { Icon: BuildingOffice2Icon, show: (user) => hasPermission(user, PERMISSIONS.CREATE_REPORT), name: 'Adresse Imprécise', href: '/user/@me?newImpreciseAddressReport' }, { Icon: ArchiveBoxIcon, show: (user) => hasPermission(user, PERMISSIONS.CREATE_REPORT), name: 'Rapport du Soir', href: '/user/@me?newReport' }],
-    [{ Icon: ArrowLeftOnRectangleIcon, name: 'Se déconnecter', onClick: handleLogout, color: "text-red-600", iconColor: "text-red-600", colorHover: "text-red-700", iconColorHover: "group-hover:text-red-700" }],
-];
-const userMobileNavigation = [
-    [{ Icon: UserIcon, name: 'Mon compte', href: '/user/@me' }, { Icon: ArchiveBoxArrowDownIcon, show: (user) => hasPermission(user, PERMISSIONS.CREATE_REPORT), name: 'Rapport du Matin', href: '/user/@me?newMorningReport' }, { Icon: BuildingOffice2Icon, show: (user) => hasPermission(user, PERMISSIONS.CREATE_REPORT), name: 'Adresse Imprécise', href: '/user/@me?newImpreciseAddressReport' }, { Icon: ArchiveBoxIcon, show: (user) => hasPermission(user, PERMISSIONS.CREATE_REPORT), name: 'Rapport du Soir', href: '/user/@me?newReport' }],
+    [{ Icon: UserIcon, name: 'Mon compte', href: '/user/@me' }],
+    [
+        { Icon: ArchiveBoxArrowDownIcon, show: (user) => hasPermission(user, PERMISSIONS.CREATE_REPORT), name: 'Rapport du Matin', href: '/user/@me?newMorningReport' },
+        { Icon: BuildingOffice2Icon, show: (user) => hasPermission(user, PERMISSIONS.CREATE_REPORT), name: 'Adresse Imprécise', href: '/user/@me?newImpreciseAddressReport' },
+        { Icon: ArchiveBoxIcon, show: (user) => hasPermission(user, PERMISSIONS.CREATE_REPORT), name: 'Rapport du Soir', href: '/user/@me?newReport' },
+
+        { Icon: ArchiveBoxArrowDownIcon, show: (user) => hasPermission(user, PERMISSIONS.VIEW_REPORTS), name: 'Rapports du Matin', href: '/admin/reports/m' },
+        { Icon: BuildingOffice2Icon, show: (user) => hasPermission(user, PERMISSIONS.VIEW_REPORTS), name: 'Adresses Imprécises', href: '/admin/reports/a' },
+        { Icon: ArchiveBoxIcon, show: (user) => hasPermission(user, PERMISSIONS.VIEW_REPORTS), name: 'Rapports du Soir', href: '/admin/reports/e' },
+        { Icon: UserGroupIcon, show: (user) => hasPermission(user, PERMISSIONS.VIEW_PROFILES), name: 'Personnel', href: '/admin/staff' }
+    ],
     [{ Icon: ArrowLeftOnRectangleIcon, name: 'Se déconnecter', onClick: handleLogout, color: "text-red-600", iconColor: "text-red-600", colorHover: "hover:text-red-700", iconColorHover: "group-hover:text-red-700" }],
 ];
 
@@ -40,7 +46,7 @@ export default function UserMenu({ user, setUser, addAlert }) {
     </Menu>);
 }
 
-export function UserMenuTab({ user, setUser, addAlert, Element = "div", navigate = userMobileNavigation }) {
+export function UserMenuTab({ user, setUser, addAlert, Element = "div", navigate = userNavigation }) {
     const history = useHistory();
 
     return (<>
@@ -62,6 +68,7 @@ export function UserMenuTab({ user, setUser, addAlert, Element = "div", navigate
                                             item.className
                                         )}
                                     >
+                                        {<item.Icon className={clsx("mr-3 h-5 w-5", item.iconColor || "text-theme-700", item.iconColorHover || "group-hover:text-theme-800")} aria-hidden="true" />}
                                         {item.name}
                                     </Link> :
                                     <button

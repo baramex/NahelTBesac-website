@@ -14,6 +14,7 @@ const reportSchema = new Schema({
     opinion: { type: Number, required: true, min: 1, max: 5 },
     mileage: { type: Number, required: true, min: 0 },
     fuel: { type: Number, required: true, min: 0, max: 100 },
+    licensePlate: { type: String, validate: /^[A-Z]{2}-[0-9]{3}-[A-Z]{2}$/, required: true },
     packetsNotDelivered: {
         type: [{
             reason: { type: Number, enum: Object.values(NOT_DELIVERED_REASONS) },
@@ -32,8 +33,8 @@ class Report {
         select: "name"
     };
 
-    static async create(profileId, round, opinion, mileage, fuel, packetsNotDelivered) {
-        return (await new ReportModel({ profile: profileId, round, opinion, mileage, fuel, packetsNotDelivered }).save()).populate(Report.populate);
+    static async create(profileId, round, opinion, mileage, fuel, licensePlate, packetsNotDelivered) {
+        return (await new ReportModel({ profile: profileId, round, opinion, mileage, fuel, licensePlate, packetsNotDelivered }).save()).populate(Report.populate);
     }
 
     static async getByProfileId(profileId) {

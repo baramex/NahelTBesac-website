@@ -88,7 +88,7 @@ export default function Account(props) {
     }, [id]);
 
     useEffect(() => {
-        if (isMe) props.setUser(user);
+        if (isMe && user) props.setUser(user);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
@@ -178,6 +178,7 @@ export default function Account(props) {
                                 type="text"
                                 Element="input"
                                 placeholder="NOM Prénom"
+                                autoComplete="off"
                                 formatProperty={v => ({ name: { lastname: v.split(" ")[0], firstname: v.split(" ")[1] } })}
                                 pattern={fullnamePattern}
                                 onInput={handleFullnameInput}
@@ -191,6 +192,7 @@ export default function Account(props) {
 
                                 canUpdate={canEditProfiles}
                                 Element="select"
+                                autoComplete="off"
                                 profile={id}
                                 formatProperty={v => ({ role: roles?.find(role => role.name === v)?._id })}
                             >
@@ -207,6 +209,7 @@ export default function Account(props) {
                                 profile={id}
                                 type="email"
                                 Element="input"
+                                autoComplete="off"
                                 placeholder="exemple@domaine.xyz"
                                 formatProperty={v => ({ email: v })}
                             />
@@ -219,6 +222,7 @@ export default function Account(props) {
                                 canUpdate={isMe ? true : canEditProfiles}
                                 profile={id}
                                 type="password"
+                                autocompte="new-password"
                                 Element="input"
                                 placeholder="•••••••••"
                                 formatProperty={v => ({ password: v })}
@@ -237,8 +241,8 @@ export default function Account(props) {
                         addButton={isMe && "Nouveau"}
                         onClick={() => setCreateReport(true)}
                         disabled={todayReport && "Disponible le " + tomorrowDate.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })}
-                        head={["Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                        rows={reports && reports.map(a => [a._id, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex gap-2">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)}><Triangle className="w-3 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
+                        head={["Tournée", "Immatriculation", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
+                        rows={reports && reports.map(a => [a._id, a.round, a.licensePlate, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex gap-2">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)}><Triangle className="w-3 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
                         links={[{ name: "Voir", href: id => "/report/" + id }]}
                     />
                 }
@@ -278,8 +282,8 @@ export default function Account(props) {
                         className="mt-20"
                         name="Rapports du Soir de la Journée"
                         description="Tous les rapports du soir remplis depuis ce matin."
-                        head={["Livreur", "Tournée", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                        rows={todayReports && todayReports.map(a => [a._id, <div className="items-center flex gap-2">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, a.round, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center gap-2 flex">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)} ><Triangle className="w-3 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
+                        head={["Livreur", "Tournée", "Immatriculation", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
+                        rows={todayReports && todayReports.map(a => [a._id, <div className="items-center flex gap-2">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, a.round, a.licensePlate, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center gap-2 flex">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)} ><Triangle className="w-3 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
                         links={[{ name: "Voir", href: id => "/report/" + id }]}
                     />
                 }
@@ -315,7 +319,7 @@ export default function Account(props) {
                         name="Personnel"
                         addButton="Ajouter"
                         onClick={() => setNewAccount(true)}
-                        head={["Nom/prénom", "Fonction", "Email", "Dernier rapport"]}
+                        head={["Nom/prénom", "Fonction", "Email", "Dernier Rapport du Soir"]}
                         description="Ajouter, modifier et supprimer des comptes."
                         rows={staff && staff.map(a => [a._id, <>{a.name.lastname} {a.name.firstname} {a._id === props.user._id && <span className="text-xs font-normal text-gray-200">(vous)</span>}</>, a.role.name, a.email, hasPermission(a, PERMISSIONS.CREATE_REPORT) ? todayReports && todayReports.find(b => b.profile._id === a._id) ? <div className="items-center gap-2 flex">{new Date(todayReports.find(b => b.profile._id === a._id)?.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })}<Link to={`/report/${todayReports.find(b => b.profile._id === a._id)._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div> || "--" : "--" : "--"])}
                         links={[{ name: "Gérer", href: id => id === props.user._id ? null : "/user/" + id }]}
@@ -339,13 +343,13 @@ function EditableField({ label, profile, value, canUpdate, setUser, addAlert, is
         <dd className={clsx("flex text-sm text-gray-100 gap-2 md:col-span-2 my-0 md:flex-row md:items-center", edit ? "flex-col" : "items-center")}>
             {edit ? <span className="flex-grow">{
                 type === "password" && props.Element === "input" ? <div className='md:w-1/2 relative overflow-hidden group'>
-                    <Field autoComplete="off" forwardRef={input} Element="input" className="!py-1 !border-theme-500 !text-gray-100 !bg-theme-700 peer pr-10" type={showPassword ? "text" : "password"} {...props} />
+                    <Field forwardRef={input} Element="input" className="!py-1 !border-theme-500 !text-gray-100 !bg-theme-700 peer pr-10" type={showPassword ? "text" : "password"} {...props} />
                     <input id={"show-" + id} name='show' checked={showPassword} onChange={e => setShowPassword(e.target.checked)} className='hidden' type="checkbox" />
                     <label htmlFor={"show-" + id} className={clsx('transition-transform absolute flex items-center mr-3 right-0 top-0 h-full peer-hover:translate-y-0 peer-focus:translate-y-0 hover:translate-y-0 cursor-pointer', showPassword ? "translate-y-0" : "-translate-y-full")}>
                         <EyeIcon className={clsx('stroke-theme-300 stroke-1 hover:stroke-theme-400', showPassword ? "hidden" : "")} width="22" />
                         <EyeSlashIcon className={clsx('stroke-1 stroke-theme-300 hover:stroke-theme-400', !showPassword ? "hidden" : "")} width="22" />
                     </label>
-                </div> : <Field autoComplete="off" type={type} forwardRef={input} className="md:!w-1/2 !py-1 !border-theme-500 !text-gray-100 !bg-theme-700" defaultValue={value} {...props}>{children}</Field>
+                </div> : <Field type={type} forwardRef={input} className="md:!w-1/2 !py-1 !border-theme-500 !text-gray-100 !bg-theme-700" defaultValue={value} {...props}>{children}</Field>
             }</span> : value ? <span className="flex-grow">{value}</span> : null}
             {canUpdate &&
                 <span className="flex-shrink-0 flex gap-5">
