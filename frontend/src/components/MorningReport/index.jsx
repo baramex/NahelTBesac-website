@@ -5,7 +5,7 @@ import { ArrowLeftIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outl
 import Loading from "../Misc/Loading";
 import Header from "../Layout/Header";
 import Footer from "../Layout/Footer";
-import Table from "../Misc/Tables";
+import { Table } from "../Misc/Tables";
 import { Triangle } from "../Images/Icons";
 import { fetchMorningReport } from "../../lib/service/morningReports";
 

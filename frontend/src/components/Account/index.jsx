@@ -17,7 +17,7 @@ import Footer from "../Layout/Footer";
 import Header from "../Layout/Header";
 import { Field } from "../Misc/Fields";
 import Loading from "../Misc/Loading";
-import Table from "../Misc/Tables";
+import { Table } from "../Misc/Tables";
 import ConfirmModal from "../Modals/Confirm";
 import CreateAccountModal from "../Modals/CreateAccount";
 import CreateImpreciseAddressReportModal from "../Modals/CreateImpreciseAddressReport";
@@ -272,42 +272,6 @@ export default function Account(props) {
                         onClick={() => setCreateImpreciseAddressReport(true)}
                         head={["N° de Colis", "Commentaire", "Date"]}
                         rows={impreciseAddressReports && impreciseAddressReports.map(a => [a._id, a.packageNumber, a.note || "Aucun", new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
-                        links={[{ name: "Voir", href: id => "/imprecise-address-report/" + id }]}
-                    />
-                }
-
-                {canViewReports && isMe &&
-                    <Table
-                        maxPerPage={5}
-                        className="mt-20"
-                        name="Rapports du Soir de la Journée"
-                        description="Tous les rapports du soir remplis depuis ce matin."
-                        head={["Livreur", "Tournée", "Immatriculation", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                        rows={todayReports && todayReports.map(a => [a._id, <div className="items-center flex gap-2">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, a.round, a.licensePlate, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center gap-2 flex">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)} ><Triangle className="w-3 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
-                        links={[{ name: "Voir", href: id => "/report/" + id }]}
-                    />
-                }
-
-                {canViewReports && isMe &&
-                    <Table
-                        maxPerPage={5}
-                        className="mt-20"
-                        name="Rapports du Matin de la Journée"
-                        head={["Livreur", "Photo", "Date"]}
-                        description="Tous les rapports du matin remplis depuis ce matin."
-                        rows={todayMorningReports && todayMorningReports.map(a => [a._id, <div className="items-center flex gap-2">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, <button onClick={() => setMorningReport(a._id)}>Voir photo <Triangle className="inline ml-1 w-3 stroke-gray-100" /></button>, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
-                        links={[{ name: "Voir", href: id => "/morning-report/" + id }]}
-                    />
-                }
-
-                {canViewReports && isMe &&
-                    <Table
-                        maxPerPage={5}
-                        className="mt-20"
-                        name="Rapports d'Adresse Imprécise de la Journée"
-                        head={["Livreur", "N° de Colis", "Commentaire", "Date"]}
-                        description="Tous les rapports d'adresse imprécise remplis depuis ce matin."
-                        rows={todayImpreciseAddressReports && todayImpreciseAddressReports.map(a => [a._id, <div className="items-center flex gap-2">{a.profile.name.firstname} {a.profile.name.lastname}<Link to={`/user/${a.profile._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div>, a.packageNumber, a.note || "Aucun", new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
                         links={[{ name: "Voir", href: id => "/imprecise-address-report/" + id }]}
                     />
                 }

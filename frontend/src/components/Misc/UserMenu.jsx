@@ -120,7 +120,7 @@ async function handleLogout(e, setUser, addAlert, history) {
         await logout();
         setUser(null);
         addAlert({ type: "success", title: "Déconnecté.", ephemeral: true });
-        if (document.location.pathname.startsWith("/user") || document.location.pathname.startsWith("/report")) history.push("/");
+        if (document.location.pathname.startsWith("/user") || document.location.pathname.startsWith("/report") || document.location.pathname.startsWith("/admin")) history.push("/");
     } catch (error) {
         addAlert({ type: "error", title: "Erreur lors de la déconnexion: " + (error.message || "Une erreur est survenue."), ephemeral: true });
     }

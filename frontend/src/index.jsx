@@ -16,8 +16,7 @@ import "./styles/tailwind.css";
 import Report from './components/Report';
 import MorningReport from './components/MorningReport';
 import ImpreciseAddressReport from './components/ImpreciseAddressReport';
-import Reports from './components/Admin/Reports';
-import Staff from './components/Admin/Staff';
+import Admin from './components/Admin';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -88,10 +87,10 @@ function App() {
                     <Route exact path="/morning-report/:id"><MorningReport {...props} /></Route>
                     <Route exact path="/imprecise-address-report/:id"><ImpreciseAddressReport {...props} /></Route>
 
-                    <Route exact path="/admin/reports/m"><Reports type="m" {...props} /></Route>
-                    <Route exact path="/admin/reports/a"><Reports type="a" {...props} /></Route>
-                    <Route exact path="/admin/reports/e"><Reports type="e" {...props} /></Route>
-                    <Route exact path="/admin/staff"><Staff {...props} /></Route>
+                    <Route exact path="/admin/reports/m"><Admin type="m" {...props} /></Route>
+                    <Route exact path="/admin/reports/a"><Admin type="a" {...props} /></Route>
+                    <Route exact path="/admin/reports/e"><Admin type="e" {...props} /></Route>
+                    <Route exact path="/admin/staff"><Admin type="p" {...props} /></Route>
                 </Router>
             }
         </>

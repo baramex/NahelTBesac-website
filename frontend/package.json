@@ -1,6 +1,6 @@
 {
     "name": "naheltbesac-website",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "",
     "proxy": "http://localhost:4500/",
     "private": true,
