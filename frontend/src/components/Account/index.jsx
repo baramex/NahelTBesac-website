@@ -19,7 +19,6 @@ import { Field } from "../Misc/Fields";
 import Loading from "../Misc/Loading";
 import { Table } from "../Misc/Tables";
 import ConfirmModal from "../Modals/Confirm";
-import CreateAccountModal from "../Modals/CreateAccount";
 import CreateImpreciseAddressReportModal from "../Modals/CreateImpreciseAddressReport";
 import CreateMorningReportModal from "../Modals/CreateMorningReport";
 import CreateReportModal from "../Modals/CreateReport";
@@ -50,7 +49,6 @@ export default function Account(props) {
     const canCreateReport = hasPermission(user, PERMISSIONS.CREATE_REPORT);
 
     const params = new URLSearchParams(document.location.search);
-    const [newAccount, setNewAccount] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [createReport, setCreateReport] = useState(false);
     const [packetsNotDelivered, setPacketsNotDelivered] = useState(false);
@@ -113,12 +111,6 @@ export default function Account(props) {
     if (!props.user) return null;
 
     return (<>
-        <CreateAccountModal roles={roles} addAlert={props.addAlert} onClose={e => {
-            if (e) {
-                setStaff(a => a.push(e) && a);
-            }
-            setNewAccount(false);
-        }} open={newAccount} />
         <ConfirmModal open={confirmDelete} message="Êtes-vous sûr de vouloir supprimer ce compte ?" onClose={setConfirmDelete} onConfirm={() => handleDelete(id, props.addAlert, history, setStaff, setConfirmDelete, setUser)} title="Suppression de Compte" />
         <CreateReportModal addAlert={props.addAlert} open={createReport} onClose={e => {
             if (e) {
@@ -273,20 +265,6 @@ export default function Account(props) {
                         head={["N° de Colis", "Commentaire", "Date"]}
                         rows={impreciseAddressReports && impreciseAddressReports.map(a => [a._id, a.packageNumber, a.note || "Aucun", new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
                         links={[{ name: "Voir", href: id => "/imprecise-address-report/" + id }]}
-                    />
-                }
-
-                {canViewProfiles && isMe &&
-                    <Table
-                        maxPerPage={5}
-                        className="mt-20"
-                        name="Personnel"
-                        addButton="Ajouter"
-                        onClick={() => setNewAccount(true)}
-                        head={["Nom/prénom", "Fonction", "Email", "Dernier Rapport du Soir"]}
-                        description="Ajouter, modifier et supprimer des comptes."
-                        rows={staff && staff.map(a => [a._id, <>{a.name.lastname} {a.name.firstname} {a._id === props.user._id && <span className="text-xs font-normal text-gray-200">(vous)</span>}</>, a.role.name, a.email, hasPermission(a, PERMISSIONS.CREATE_REPORT) ? todayReports && todayReports.find(b => b.profile._id === a._id) ? <div className="items-center gap-2 flex">{new Date(todayReports.find(b => b.profile._id === a._id)?.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })}<Link to={`/report/${todayReports.find(b => b.profile._id === a._id)._id}`}><Triangle className="w-3 stroke-gray-100" /></Link></div> || "--" : "--" : "--"])}
-                        links={[{ name: "Gérer", href: id => id === props.user._id ? null : "/user/" + id }]}
                     />
                 }
             </>
