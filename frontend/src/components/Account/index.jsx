@@ -233,8 +233,8 @@ export default function Account(props) {
                         addButton={isMe && "Nouveau"}
                         onClick={() => setCreateReport(true)}
                         disabled={todayReport && "Disponible le " + tomorrowDate.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" })}
-                        head={["Tournée", "Immatriculation", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-                        rows={reports && reports.map(a => [a._id, a.round, a.licensePlate, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex gap-2">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)}><Triangle className="w-3 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
+                        head={["Tournée", "N° de PDA", "Immatriculation", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
+                        rows={reports && reports.map(a => [a._id, a.round, a.PDANumber, a.licensePlate, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center flex gap-2">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)}><Triangle className="w-3 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })])}
                         links={[{ name: "Voir", href: id => "/report/" + id }]}
                     />
                 }

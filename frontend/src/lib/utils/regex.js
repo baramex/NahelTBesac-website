@@ -9,6 +9,7 @@ export const lastnamePattern = "^[A-Zà-ÿ]{2,32}$";
 export const fullnamePattern = "^[A-Zà-ÿ]{2,32} [A-ZÀ-ÿ][a-zà-ÿ]{1,31}$";
 export const passwordPattern = "^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9]))).{6,32}$";
 export const licensePlatePattern = "^[A-Z]{2}-[0-9]{3}-[A-Z]{2}$";
+export const PDANumberPattern = "^[0-9]{5}$";
 
 export function handleFirstameInput(e) {
     if (!e.target.value) return;
@@ -39,6 +40,11 @@ export function handleLicensePlateInput(e) {
     else if (e.nativeEvent.inputType === "deleteContentBackward") {
         if ([2, 6, 9].includes(e.target.value.length)) e.target.value = e.target.value.slice(0, -1);
     }
+}
+
+export function handlePDANumberInput(e) {
+    if (!e.target.value) return;
+    e.target.value = e.target.value.replace(/[^0-9]/g, "");
 }
 
 export function isValidPassword(password) {

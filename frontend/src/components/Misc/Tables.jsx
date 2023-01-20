@@ -143,10 +143,10 @@ export function ReportsTable({ setCreateReport, setPacketsNotDelivered, ...props
     return (
         <ReportTable
             name="Rapports du soir"
-            head={["Tournée", "Immatriculation", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
+            head={["Tournée", "N° de PDA", "Immatriculation", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
             description="Tous les rapports du soir remplis depuis ce soir."
             createDescription="Vous ne pouvez remplir qu'un rapport par jour."
-            generateFields={a => [a.round, a.licensePlate, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center gap-2 flex">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)} ><Triangle className="w-3 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })]}
+            generateFields={a => [a.round, a.PDANumber, a.licensePlate, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center gap-2 flex">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)} ><Triangle className="w-3 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })]}
             link="/report/"
             setCreateReport={setCreateReport}
             {...props}

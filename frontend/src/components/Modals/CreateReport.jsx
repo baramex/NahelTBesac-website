@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { useState } from "react";
 import Modal from ".";
 import { createReport } from "../../lib/service/report";
-import { handleLicensePlateInput, licensePlatePattern } from "../../lib/utils/regex";
+import { handleLicensePlateInput, handlePDANumberInput, licensePlatePattern, PDANumberPattern } from "../../lib/utils/regex";
 import { FuelGaugeField, Label, SelectMenuField, StarRatingField, TextField } from "../Misc/Fields";
 
 export default function CreateReportModal({ open, onClose, addAlert }) {
@@ -33,6 +33,19 @@ export default function CreateReportModal({ open, onClose, addAlert }) {
                             autoComplete="round"
                             variant="theme"
                             maxLength={1}
+                            required
+                        />
+                        <TextField
+                            label="N° de PDA"
+                            showRequired={true}
+                            placeholder="24500"
+                            id="PDANumber"
+                            name="PDANumber"
+                            autoComplete="PDANumber"
+                            variant="theme"
+                            maxLength={5}
+                            pattern={PDANumberPattern}
+                            onInput={handlePDANumberInput}
                             required
                         />
                         <TextField
@@ -111,6 +124,7 @@ async function handleSubmit(e, addAlert, onClose) {
     elements.forEach(el => el.disabled = true);
 
     const round = e.target.round.value;
+    const PDANumber = e.target.PDANumber.value;
     const licensePlate = e.target.licensePlate.value;
     const opinion = parseInt(e.target.star.value);
     const mileage = parseInt(e.target.mileage.value);
@@ -128,6 +142,7 @@ async function handleSubmit(e, addAlert, onClose) {
     form.append("mileage", mileage);
     form.append("fuel", fuel);
     form.append("packetsNotDelivered", JSON.stringify(packetsNotDelivered));
+    form.append("PDANumber", PDANumber);
     packetsNotDeliveredPhotos.forEach(photo => {
         form.append("packetsNotDeliveredPhoto-" + photo.id, photo.value);
     });

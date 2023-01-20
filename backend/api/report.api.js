@@ -42,9 +42,9 @@ router.get("/report/:id", SessionMiddleware.requiresValidAuthExpress, async (req
 router.post("/report", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.requiresPermissions(PERMISSIONS.CREATE_REPORT), upload.any(), async (req, res) => {
     try {
         if (!req.body) throw new Error("Requête invalide.");
-        let { round, opinion, mileage, fuel, licensePlate, packetsNotDelivered } = req.body;
+        let { round, opinion, mileage, fuel, licensePlate, packetsNotDelivered, PDANumber } = req.body;
         packetsNotDelivered = JSON.parse(packetsNotDelivered);
-        if (typeof round !== "string" || typeof opinion !== "string" || typeof mileage !== "string" || typeof fuel !== "string" || typeof licensePlate !== "string" || !Array.isArray(packetsNotDelivered)) throw new Error("Requête invalide.");
+        if (typeof round !== "string" || typeof opinion !== "string" || typeof mileage !== "string" || typeof fuel !== "string" || typeof licensePlate !== "string" || typeof PDANumber !== "string" || !Array.isArray(packetsNotDelivered)) throw new Error("Requête invalide.");
 
         const lastReport = await Report.getLast(req.profile._id);
         const dayDate = new Date();
@@ -62,7 +62,7 @@ router.post("/report", SessionMiddleware.requiresValidAuthExpress, ProfileMiddle
             fs.writeFileSync(path.join(__dirname, "..", "images", name), file.buffer);
         }
 
-        const report = await Report.create(req.profile._id, round, opinion, mileage, fuel, licensePlate, packetsNotDelivered);
+        const report = await Report.create(req.profile._id, round, opinion, mileage, fuel, licensePlate, PDANumber, packetsNotDelivered);
         res.status(200).json(report);
 
         (async () => {
