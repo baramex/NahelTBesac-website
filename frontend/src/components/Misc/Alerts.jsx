@@ -1,5 +1,8 @@
+import { Dialog } from "@headlessui/react";
 import { CheckCircleIcon, ExclamationTriangleIcon, XCircleIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { CheckIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
+import Modal from "../Modals";
 
 export function AlertError({ border, ...props }) {
     return (
@@ -19,8 +22,30 @@ export function AlertSuccess({ border, ...props }) {
     );
 }
 
-export function Alert({ title, list, className, bgColor, iconStyle, titleColor, textColor, Icon, crossStyle, border, canClose = true, onClose, ephemeral, ...props }) {
-    return (
+export function Alert({ title, list, className, bgColor, iconStyle, titleColor, textColor, Icon, crossStyle, border, canClose = true, onClose, ephemeral, popup, ...props }) {
+    return (popup ?
+        <Modal className="sm:!w-auto" onClose={onClose} open={true}>
+            <div className="flex flex-col items-center gap-3">
+                <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <CheckIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
+                </div>
+                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
+                        {title}
+                    </Dialog.Title>
+                </div>
+            </div>
+            <div className="flex justify-center mt-5">
+                <button
+                    type="button"
+                    className="focus:outline-none bg-theme-500 hover:bg-theme-600 transition-colors inline-flex w-full justify-center rounded-md border border-transparent px-4 py-1.5 text-base font-medium text-white shadow-sm focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
+                    onClick={() => onClose(false)}
+                >
+                    Ok
+                </button>
+            </div>
+        </Modal>
+        :
         <div className={clsx("p-4 animate-slide-in pointer-events-auto", className, bgColor, border ? "rounded-r-md border-l-2" : ephemeral ? "rounded-full md:mx-auto md:w-3/12 md:min-w-[24rem]" : "rounded-md", border)} onAnimationEnd={ephemeral ? a => { if (a.animationName === "slide-in") { a.target.classList.remove("animate-slide-in"); a.target.classList.add("animate-delayed-fade-out"); } if (a.animationName === "fade-out") { onClose(); }; } : null} {...props}>
             <div className={clsx("flex", list ? "" : "items-center")}>
                 <div className="flex-shrink-0">
@@ -72,6 +97,7 @@ export function AlertContainer({ alerts, setAlerts }) {
                             a.splice(i, 1);
                             return [...a];
                         }),
+                        popup: alert.popup,
                         key: alert.id
                     };
                     return (alert.type === "error" ?

@@ -51,7 +51,7 @@ export default function Report(props) {
                 <h2 className="text-lg font-medium mt-10">
                     Colis Retours ({report.packetsNotDelivered.length})
                 </h2>
-                <div className="mt-5 flex flex-col-2">
+                <div className="mt-5 grid grid-cols-2 gap-5">
                     {
                         report.packetsNotDelivered?.length > 0
                             ? report.packetsNotDelivered.map((a, index) => <PacketNotDelivered key={index} index={index} id={report._id} packetNotDelivered={a} />)
@@ -77,7 +77,7 @@ function PacketNotDelivered({ index, id, packetNotDelivered }) {
             </div>
             <div>
                 <Label>Commentaire</Label>
-                <p className="text-theme-50 text-sm break-words">{packetNotDelivered.comment || "Aucun commentaire."}</p>
+                <p className="text-theme-50 text-sm break-words">{packetNotDelivered.note || "Aucun commentaire."}</p>
             </div>
         </div>
         <div className="row-span-2 flex-1">

@@ -133,7 +133,7 @@ async function handleSubmit(e, addAlert, onClose) {
     const packetsNotDeliveredReasons = Array.from(e.target.querySelectorAll("[id^='reason-']").values()).map(e => ({ id: e.id.replace("reason-", ""), value: e.value }));
     const packetsNotDeliveredPhotos = Array.from(e.target.querySelectorAll("[id^='photo-']").values()).map(e => ({ id: e.id.replace("photo-", ""), value: e.files[0] }));
     const packetsNotDeliveredComments = Array.from(e.target.querySelectorAll("[id^='comment-']").values()).map(e => ({ id: e.id.replace("comment-", ""), value: e.value.trim() }));
-    const packetsNotDelivered = packetsNotDeliveredReasons.map((r, i) => ({ id: r.id, reason: r.value, comment: packetsNotDeliveredComments.find(a => a.id === r.id)?.value }));
+    const packetsNotDelivered = packetsNotDeliveredReasons.map((r, i) => ({ id: r.id, reason: r.value, note: packetsNotDeliveredComments.find(a => a.id === r.id)?.value }));
 
     const form = new FormData();
     form.append("round", round);
@@ -149,7 +149,7 @@ async function handleSubmit(e, addAlert, onClose) {
 
     try {
         const report = await createReport(form);
-        addAlert({ type: "success", title: "Le rapport a bien été créé et envoyé.", ephemeral: true });
+        addAlert({ type: "success", title: "Le rapport a bien été créé et envoyé.", popup: true });
         onClose(report);
     } catch (error) {
         addAlert({ type: "error", title: error.message || "Une erreur est survenue.", ephemeral: true });
@@ -186,6 +186,7 @@ function PacketNotDelivered({ id, onRemove }) {
             <option value="0" className="text-theme-800">NPAI (mauvaise adresse/nom/etc)</option>
             <option value="1" className="text-theme-800">Problème d'Accès</option>
             <option value="2" className="text-theme-800">Non Tenté</option>
+            <option value="4" className="text-theme-800">Avis de Passage</option>
             <option value="3" className="text-theme-800">Autre</option>
         </SelectMenuField>
         <div className="flex flex-col relative">

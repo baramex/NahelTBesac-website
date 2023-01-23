@@ -9,13 +9,13 @@ export default function MorningReportModal({ onClose, id: _id, open }) {
         if (_id) setId(_id);
     }, [_id]);
 
-    return (<Modal onClose={onClose} open={open}>
+    return (<Modal className="!w-auto" onClose={onClose} open={open}>
         <div>
             <Dialog.Title as="h3" className="text-center text-lg font-medium leading-6 text-gray-900">
                 Rapport du Matin
             </Dialog.Title>
             <div className="mt-7">
-                <img className="w-full" src={`/api/morning-report/${id}/photo`} alt="Colis Chargés" />
+                <img className="w-auto max-h-96" src={`/api/morning-report/${id}/photo`} alt="Colis Chargés" />
             </div>
             <div className="mt-5 flex justify-center">
                 <button

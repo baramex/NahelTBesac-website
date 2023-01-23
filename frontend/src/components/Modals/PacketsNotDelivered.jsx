@@ -16,7 +16,7 @@ export default function PacketsNotDeliveredModal({ onClose, open, report: _repor
             <Dialog.Title as="h3" className="text-center text-lg font-medium leading-6 text-gray-900">
                 Colis Retours
             </Dialog.Title>
-            <div className="mt-7">
+            <div className="mt-7 flex flex-col gap-4">
                 {
                     report?.packetsNotDelivered?.length > 0
                         ? report.packetsNotDelivered.map((a, index) => <PacketNotDelivered key={index} index={index} id={report._id} packetNotDelivered={a} />)
@@ -49,7 +49,7 @@ function PacketNotDelivered({ index, id, packetNotDelivered }) {
             </div>
             <div>
                 <Label variant="theme">Commentaire</Label>
-                <p className="text-theme-700 text-sm break-words">{packetNotDelivered.comment || "Aucun commentaire."}</p>
+                <p className="text-theme-700 text-sm break-words">{packetNotDelivered.note || "Aucun commentaire."}</p>
             </div>
         </div>
         <div className="row-span-2 flex-1">

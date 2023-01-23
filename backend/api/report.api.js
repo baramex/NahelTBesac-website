@@ -51,7 +51,7 @@ router.post("/report", SessionMiddleware.requiresValidAuthExpress, ProfileMiddle
         dayDate.setHours(0, 0, 0, 0);
         if (lastReport && lastReport.date > dayDate) throw new Error("Vous avez déjà créé un rapport aujourd'hui.");
 
-        packetsNotDelivered = packetsNotDelivered.map(a => ({ id: a.id, reason: a.reason, comment: a.comment }));
+        packetsNotDelivered = packetsNotDelivered.map(a => ({ id: a.id, reason: a.reason, note: a.note }));
 
         const files = req.files;
         for (const file of files) {

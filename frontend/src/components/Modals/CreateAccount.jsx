@@ -152,7 +152,7 @@ async function handleSubmit(e, addAlert, onClose) {
     try {
         const user = await register({ email, name: { firstname, lastname }, password, role });
         onClose(user);
-        addAlert({ type: "success", title: "Le compte a bien été créé.", ephemeral: true });
+        addAlert({ type: "success", title: "Le compte a bien été créé.", popup: true });
     } catch (error) {
         addAlert({ type: "error", title: error.message || "Une erreur est survenue.", ephemeral: true });
         elements.forEach(el => el.disabled = false);

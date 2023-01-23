@@ -77,7 +77,7 @@ async function handleSubmit(e, addAlert, onClose) {
 
     try {
         const report = await createImpreciseAddressReport(packageNumber, note);
-        addAlert({ type: "success", title: "Le rapport a bien été créé et envoyé.", ephemeral: true });
+        addAlert({ type: "success", title: "Le rapport a bien été créé et envoyé.", popup: true });
         onClose(report);
     } catch (error) {
         addAlert({ type: "error", title: error.message || "Une erreur est survenue.", ephemeral: true });

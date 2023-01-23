@@ -5,7 +5,8 @@ const NOT_DELIVERED_REASONS = {
     NPAI: 0,
     ACCESS_PROBLEM: 1,
     NOT_ATTEMPTED: 2,
-    OTHER: 3
+    OTHER: 3,
+    NOTICE_OF_PASSAGE: 4
 };
 
 const reportSchema = new Schema({
