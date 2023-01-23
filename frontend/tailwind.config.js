@@ -22,6 +22,7 @@ module.exports = {
             animation: {
                 "delayed-fade-out": "fade-out .3s ease-out 2.5s forwards",
                 "slide-in": "slide-in .3s cubic-bezier(0.075, 0.820, 0.165, 1.000)",
+                "spin-fast": "spin .5s linear infinite"
             },
             keyframes: {
                 "fade-out": {

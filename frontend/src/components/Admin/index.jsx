@@ -17,6 +17,8 @@ import PacketsNotDeliveredModal from "../Modals/PacketsNotDelivered";
 export default function Admin({ type, ...props }) {
     const history = useHistory();
 
+    const [date, setDate] = useState(new Date());
+
     const [todayReports, setTodayReports] = useState(null);
     const [todayMorningReports, setTodayMorningReports] = useState(null);
     const [todayImpreciseAddressReports, setTodayImpreciseAddressReports] = useState(null);
@@ -29,22 +31,39 @@ export default function Admin({ type, ...props }) {
     const [newAccount, setNewAccount] = useState(false);
 
     useEffect(() => {
-        if (props.user) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+        if (todayReports) setTodayReports(false);
+        if (todayMorningReports) setTodayMorningReports(false);
+        if (todayImpreciseAddressReports) setTodayImpreciseAddressReports(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [date]);
 
-            if (!todayReports && type === "e") fetchData(props.addAlert, setTodayReports, fetchReportsQuery, true, { startDate: today.toISOString() });
-            if (!todayMorningReports && type === "m") fetchData(props.addAlert, setTodayMorningReports, fetchMorningReportsQuery, true, { startDate: today.toISOString() });
-            if (!todayImpreciseAddressReports && type === "a") fetchData(props.addAlert, setTodayImpreciseAddressReports, fetchImpreciseAddressReportsQuery, true, { startDate: today.toISOString() });
+    useEffect(() => {
+        if (props.user) {
+            const start = new Date(date);
+            start.setHours(0, 0, 0, 0);
+            const end = new Date(date);
+            end.setHours(23, 59, 59, 999);
+
+            if (!todayReports && type === "e") fetchData(props.addAlert, setTodayReports, fetchReportsQuery, true, { startDate: start.toISOString(), endDate: end.toISOString() });
+            else if (!todayMorningReports && type === "m") fetchData(props.addAlert, setTodayMorningReports, fetchMorningReportsQuery, true, { startDate: start.toISOString(), endDate: end.toISOString() });
+            else if (!todayImpreciseAddressReports && type === "a") fetchData(props.addAlert, setTodayImpreciseAddressReports, fetchImpreciseAddressReportsQuery, true, { startDate: start.toISOString(), endDate: end.toISOString() });
+
             if (!staff && type === "p") fetchData(props.addAlert, setStaff, fetchUsers, true);
             if (!roles && type === "p") fetchData(props.addAlert, setRoles, fetchRoles);
         } else history.replace("/login?redirect=" + history.location.pathname);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [type]);
+    }, [type, todayReports, todayMorningReports, todayImpreciseAddressReports]);
 
     if (!props.user) return null;
 
-    const dprops = { daily: true, canCreate: false, showEmployee: true, reports: { m: todayMorningReports, e: todayReports, a: todayImpreciseAddressReports }[type] };
+    const dprops = {
+        onSort: setDate, onRefresh: () => {
+            if (type === "e") setTodayReports(false);
+            else if (type === "m") setTodayMorningReports(false);
+            else if (type === "a") setTodayImpreciseAddressReports(false);
+            else if (type === "p") setStaff(false);
+        }, canCreate: false, showEmployee: true, reports: { m: todayMorningReports, e: todayReports, a: todayImpreciseAddressReports }[type]
+    };
 
     const Icon = { m: ArchiveBoxArrowDownIcon, e: ArchiveBoxIcon, a: BuildingOffice2Icon, p: UserGroupIcon }[type];
 
@@ -63,7 +82,7 @@ export default function Admin({ type, ...props }) {
             <div className="mx-auto flex h-10 w-10 p-2 mt-14 mb-5 items-center justify-center rounded-full bg-theme-50">
                 <Icon className="text-theme-600" aria-hidden="true" />
             </div>
-            <h1 className="text-center text-3xl font-medium mb-14">{{ m: "Rapports du Matin de la journée", e: "Rapports du Soir de la journée", a: "Rapports d'Adresse Imprécise de la journée", p: "Personnel" }[type]}</h1>
+            <h1 className="text-center text-3xl font-medium mb-14">{{ m: "Rapports du Matin", e: "Rapports du Soir", a: "Rapports d'Adresse Imprécise", p: "Personnel" }[type]}</h1>
             {{
                 m: <MorningReportsTable setMorningReport={setMorningReport} {...dprops} />,
                 e: <ReportsTable setPacketsNotDelivered={setPacketsNotDelivered} {...dprops} />,

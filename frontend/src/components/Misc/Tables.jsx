@@ -1,19 +1,21 @@
-import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import clsx from "clsx";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { formatDate } from "../../lib/utils/date";
 import { thousandsSeparator } from "../../lib/utils/numbers";
 import { hasPermission, PERMISSIONS } from "../../lib/utils/permissions";
 import { FuelGauge, Triangle } from "../Images/Icons";
+import { Label } from "./Fields";
 import Loading from "./Loading";
 
-export function Table({ className, onClick, name, description, addButton, head, rows, maxPerPage, links, disabled }) {
+export function Table({ className, onClick, name, description, addButton, head, rows, maxPerPage, links, disabled, sort, onSort, onRefresh }) {
     const [page, setPage] = useState(1);
     const maxPage = Math.ceil(rows?.length / maxPerPage);
 
     return (<div className={className}>
-        {(name || addButton) &&
+        {(name || addButton || sort) &&
             <div className={clsx("sm:flex sm:items-center", name ? "" : "justify-center")}>
                 {name &&
                     <div className="sm:flex-auto">
@@ -38,9 +40,21 @@ export function Table({ className, onClick, name, description, addButton, head, 
                         {disabled && <p className="text-xs text-theme-50">{disabled}</p>}
                     </div>
                 }
+                {sort &&
+                    <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none flex gap-4 justify-end items-end">
+                        {onRefresh &&
+                            <div className="ml-2 sm:hidden">
+                                <button onClick={onRefresh} className={clsx("focus:outline-none", !rows ? "animate-spin-fast" : "")}>
+                                    <ArrowPathIcon className="w-6 text-theme-100" />
+                                </button>
+                            </div>
+                        }
+                        <SortDateSelector onSort={onSort} />
+                    </div>
+                }
             </div>
         }
-        <div className="mt-8 flex flex-col">
+        <div className="mt-6 flex flex-col">
             <div className="overflow-x-auto">
                 <div className="inline-block min-w-full py-2 align-middle">
                     <table className="min-w-full divide-y divide-theme-50">
@@ -51,6 +65,7 @@ export function Table({ className, onClick, name, description, addButton, head, 
                                         {a}
                                     </th>
                                 )}
+                                {onRefresh && <th className="hidden sm:block text-right px-2"><button onClick={onRefresh} className={clsx("focus:outline-none", !rows ? "animate-spin-fast" : "")}><ArrowPathIcon className="w-5 text-theme-100" /></button></th>}
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-theme-500">
@@ -67,7 +82,7 @@ export function Table({ className, onClick, name, description, addButton, head, 
                                         </td> : null
                                     }
                                 </tr>
-                            )) : <tr><td colSpan={head.length} className="py-4 px-3 text-center text-gray-100 text-sm">{!rows ? <div className="flex justify-center"><Loading /></div> : "Aucune donnée."}</td></tr>}
+                            )) : <tr><td colSpan={head.length + (onRefresh ? 1 : 0)} className="py-4 px-3 text-center text-gray-100 text-sm">{!rows ? <div className="flex justify-center"><Loading /></div> : "Aucune donnée."}</td></tr>}
                         </tbody>
                     </table>
                 </div>
@@ -112,9 +127,11 @@ export function Table({ className, onClick, name, description, addButton, head, 
 export function ImpreciseAddressReportsTable({ setCreateImpreciseAddressReport, ...props }) {
     return (
         <ReportTable
+            showDescription={true}
+            showName={true}
             name="Rapports d'Adresse Imprécise"
             head={["N° de Colis", "Commentaire", "Date"]}
-            description="Tous les rapports d'adresse imprécise remplis depuis ce matin."
+            description="Tous les rapports d'adresse imprécise remplis à la date indiquée."
             createDescription="Vous pouvez remplir autant de rapport que vous voulez."
             generateFields={a => [a.packageNumber, a.note || "Aucun", new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })]}
             link="/imprecise-address-report/"
@@ -127,9 +144,11 @@ export function ImpreciseAddressReportsTable({ setCreateImpreciseAddressReport, 
 export function MorningReportsTable({ setCreateMorningReport, setMorningReport, ...props }) {
     return (
         <ReportTable
+            showDescription={true}
+            showName={true}
             name="Rapports du matin"
             head={["Photo", "Date"]}
-            description="Tous les rapports du matin remplis depuis ce matin."
+            description="Tous les rapports du matin remplis à la date indiquée."
             createDescription="Vous ne pouvez remplir qu'un rapport par jour."
             generateFields={a => [<button onClick={() => setMorningReport(a._id)}>Voir photo <Triangle className="inline ml-1 w-3 stroke-gray-100" /></button>, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })]}
             link="/morning-report/"
@@ -142,9 +161,11 @@ export function MorningReportsTable({ setCreateMorningReport, setMorningReport, 
 export function ReportsTable({ setCreateReport, setPacketsNotDelivered, ...props }) {
     return (
         <ReportTable
+            showDescription={true}
+            showName={true}
             name="Rapports du soir"
             head={["Tournée", "N° de PDA", "Immatriculation", "Avis", "Colis Retours", "Kilométrage", "Essence", "Date"]}
-            description="Tous les rapports du soir remplis depuis ce soir."
+            description="Tous les rapports du soir remplis à la date indiquée."
             createDescription="Vous ne pouvez remplir qu'un rapport par jour."
             generateFields={a => [a.round, a.PDANumber, a.licensePlate, <div className="flex items-center">{a.opinion} <StarIcon className="ml-1 w-5 text-yellow-400" /></div>, <div className="items-center gap-2 flex">{a.packetsNotDelivered.length}<button onClick={() => setPacketsNotDelivered(a)} ><Triangle className="w-3 stroke-gray-100" /></button></div>, thousandsSeparator(a.mileage) + " km", <FuelGauge className="text-gray-100 w-20" percentage={a.fuel} showPer={true} />, new Date(a.date).toLocaleString("fr-FR", { timeStyle: "short", dateStyle: "short" })]}
             link="/report/"
@@ -168,6 +189,15 @@ export function StaffTable({ setNewAccount, staff, userId, reports, showDescript
     />);
 }
 
+export function SortDateSelector({ onSort }) {
+    const currentDate = new Date();
+
+    return (<div>
+        <Label id="sortdate">Trier par date</Label>
+        <input className="[&::-webkit-calendar-picker-indicator]:invert transition-colors rounded-md bg-transparent border border-theme-50 px-3 py-1 text-sm font-medium text-theme-50 shadow-sm focus:outline-none sm:w-auto" onInput={e => onSort(new Date(e.target.valueAsNumber))} defaultValue={formatDate(currentDate)} name="sortdate" id="sortdate" type="date" max={formatDate(currentDate)} />
+    </div>);
+}
+
 function ReportTable({ name, daily, createDescription, showDescription, showName, description, canCreate, showEmployee, reports, setCreateReport, generateFields, head, link, ...props }) {
     return (<Table
         maxPerPage={10}
@@ -178,6 +208,7 @@ function ReportTable({ name, daily, createDescription, showDescription, showName
         links={[{ name: "Voir", href: id => link + id }]}
         addButton={canCreate && "Nouveau"}
         onClick={canCreate ? setCreateReport : null}
+        sort={true}
         {...props}
     />);
 }

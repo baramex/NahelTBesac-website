@@ -11,11 +11,13 @@ const router = require("express").Router();
 
 router.get("/reports", SessionMiddleware.requiresValidAuthExpress, ProfileMiddleware.requiresPermissions(PERMISSIONS.VIEW_REPORTS), async (req, res) => {
     try {
-        let { startDate } = req.query;
+        let { startDate, endDate } = req.query;
         const query = {};
 
         startDate = new Date(startDate);
+        endDate = new Date(endDate);
         if (startDate && !isNaN(startDate)) query.date = { $gte: startDate };
+        if (endDate && !isNaN(endDate)) query.date = { ...query.date, $lte: endDate };
 
         const reports = await Report.get(query);
         res.status(200).json(reports);

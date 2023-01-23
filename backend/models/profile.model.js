@@ -8,7 +8,7 @@ const { CustomError } = require("../server");
 const NAME_REGEX = /^[A-ZÀ-ÿ][a-zà-ÿ]{1,31}$/;
 const LASTNAME_REGEX = /^[A-Zà-ÿ]{2,32}$/;
 const PASSWORD_REGEX = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,32}$)/;
-hash("test123", 10).then(console.log);
+
 const profileSchema = new Schema({
     name: {
         type: {
