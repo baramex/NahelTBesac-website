@@ -13,7 +13,7 @@ export default function Rules(props) {
                     <p className="text-lg">Le règlement suivant constitue un contrat légal entre les Livreurs et Nahel Transport définissant les règles et le comportement acceptable à adopter au dépôt et en livraison.</p><br /><br />
                     <p>Bien évidemment pas besoin de détailler ce qu'est un comportement acceptable.</p><br /><br />
                     <p>Soyez Polis , Souriant et Courtois et tout devrait bien se passer.</p><br /><br />
-                    <p>A côté de ça vous devez savoir que certaines primes sont accordés en fonction de ce que vous faites.<br />
+                    <p>A côté de ça vous devez savoir que certaines primes sont accordées en fonction de ce que vous faites.<br />
                         Votre contrat ne spécifie pas une tournée en particulier , n'importe laquelle peut vous être attribuée.</p><br /><br />
                     <div>
                         <h2 className="text-lg font-medium mb-4">Vous pouvez facilement gagner votre prime en :</h2>
